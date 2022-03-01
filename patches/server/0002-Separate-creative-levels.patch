@@ -5,14 +5,14 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 470dbed47830e2f580c090bc762a7be5cf389ce5..74bf95c98bbf4959b9697940c1bf557c8a1a2e71 100644
+index 470dbed47830e2f580c090bc762a7be5cf389ce5..d536389e184ec9e9916b6f619020bf2476e7e61d 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -556,6 +556,7 @@ public class ServerPlayer extends Player {
              this.setPosRaw(position.x(), position.y(), position.z()); // Paper - don't register to chunks yet
          }
          this.gameMode.setLevel((ServerLevel) world);
-+        this.chooseInventory(); // NabServer
++        this.chooseInventory(); // Nabulus
      }
      // CraftBukkit end
  
@@ -20,7 +20,7 @@ index 470dbed47830e2f580c090bc762a7be5cf389ce5..74bf95c98bbf4959b9697940c1bf557c
  
                  // CraftBukkit end
                  this.setLevel(worldserver);
-+                this.chooseInventory(); // NabServer
++                this.chooseInventory(); // Nabulus
                  worldserver.addDuringPortalTeleport(this);
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition(); // CraftBukkit - sync position after changing it (from PortalTravelAgent#findAndteleport)
@@ -28,35 +28,35 @@ index 470dbed47830e2f580c090bc762a7be5cf389ce5..74bf95c98bbf4959b9697940c1bf557c
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
          this.textFilteringEnabled = oldPlayer.textFilteringEnabled;
          this.gameMode.setGameModeForPlayer(oldPlayer.gameMode.getGameModeForPlayer(), oldPlayer.gameMode.getPreviousGameModeForPlayer());
-+        // NabServer start
++        // Nabulus start
 +        this.normalInventory.replaceWith(oldPlayer.normalInventory);
 +        this.creativeLevelInventory.replaceWith(oldPlayer.creativeLevelInventory);
 +        this.usingNormalInventory = oldPlayer.usingNormalInventory;
-+        // NabServer end
++        // Nabulus end
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 9ca080e2745686fc2e39485965ec54c5de0bae6e..0e6e009309e3dc7aef49332f296b283c412913ac 100644
+index 9ca080e2745686fc2e39485965ec54c5de0bae6e..16ee955f744a9e04d4d791d934fb779fe545d33c 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -2286,6 +2286,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
                  // Paper end - Move player to spawn point if spawn in unloaded world
  
                  ((ServerPlayer) this).setLevel(bworld == null ? null : ((CraftWorld) bworld).getHandle());
-+                ((ServerPlayer) this).chooseInventory(); // NabServer
++                ((ServerPlayer) this).chooseInventory(); // Nabulus
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f3844b6b6661 100644
+index d85da02be7f1d494af8f2cc840c49073774f5f9c..18f41f7ac10b9e6af301f39394728eddfddbea51 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -191,12 +191,47 @@ public abstract class Player extends LivingEntity {
      }
      // CraftBukkit end
  
-+    // NabServer start
++    // Nabulus start
 +    protected final Inventory normalInventory = new Inventory(this);
 +    protected final Inventory creativeLevelInventory = new Inventory(this);
 +    private boolean inventoriesLoaded = false;
@@ -88,7 +88,7 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f384
 +    public Inventory getCreativeLevelInventory() {
 +        return usingNormalInventory ? this.creativeLevelInventory : this.inventory;
 +    }
-+    // NabServer end
++    // Nabulus end
 +
      public Player(Level world, BlockPos pos, float yaw, GameProfile profile) {
          super(EntityType.PLAYER, world);
@@ -96,7 +96,7 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f384
          this.cooldowns = this.createItemCooldowns();
          this.setUUID(Player.createPlayerUUID(profile));
          this.gameProfile = profile;
-+        this.chooseInventory(); // NabServer
++        this.chooseInventory(); // Nabulus
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
          this.containerMenu = this.inventoryMenu;
          this.moveTo((double) pos.getX() + 0.5D, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D, yaw, 0.0F);
@@ -104,16 +104,16 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f384
  
          this.inventory.load(nbttaglist);
          this.inventory.selected = nbt.getInt("SelectedItemSlot");
-+        // NabServer start
++        // Nabulus start
 +        this.normalInventory.load(nbttaglist);
 +        this.normalInventory.selected = nbt.getInt("SelectedItemSlot");
 +
-+        ListTag creativeLevelInventoryTagList = nbt.getList("NabServer.CreativeLevelInventory", 10);
++        ListTag creativeLevelInventoryTagList = nbt.getList("Nabulus.CreativeLevelInventory", 10);
 +        this.creativeLevelInventory.load(creativeLevelInventoryTagList);
-+        this.creativeLevelInventory.selected = nbt.getInt("NabServer.CreativeLevelSelectedItemSlot");
++        this.creativeLevelInventory.selected = nbt.getInt("Nabulus.CreativeLevelSelectedItemSlot");
 +        this.inventoriesLoaded = true;
 +        this.usingNormalInventory = true;
-+        // NabServer end
++        // Nabulus end
          this.sleepCounter = nbt.getShort("SleepTimer");
          this.experienceProgress = nbt.getFloat("XpP");
          this.experienceLevel = nbt.getInt("XpLevel");
@@ -123,29 +123,29 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f384
          nbt.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
 -        nbt.put("Inventory", this.inventory.save(new ListTag()));
 -        nbt.putInt("SelectedItemSlot", this.inventory.selected);
-+        nbt.put("Inventory", this.getNormalInventory().save(new ListTag())); // NabServer
-+        nbt.putInt("SelectedItemSlot", this.getNormalInventory().selected); // NabServer
-+        // NabServer start
-+        nbt.put("NabServer.CreativeLevelInventory", this.getCreativeLevelInventory().save(new ListTag()));
-+        nbt.putInt("NabServer.CreativeLevelSelectedItemSlot", this.getCreativeLevelInventory().selected);
-+        // NabServer end
++        nbt.put("Inventory", this.getNormalInventory().save(new ListTag())); // Nabulus
++        nbt.putInt("SelectedItemSlot", this.getNormalInventory().selected); // Nabulus
++        // Nabulus start
++        nbt.put("Nabulus.CreativeLevelInventory", this.getCreativeLevelInventory().save(new ListTag()));
++        nbt.putInt("Nabulus.CreativeLevelSelectedItemSlot", this.getCreativeLevelInventory().selected);
++        // Nabulus end
          nbt.putShort("SleepTimer", (short) this.sleepCounter);
          nbt.putFloat("XpP", this.experienceProgress);
          nbt.putInt("XpLevel", this.experienceLevel);
 diff --git a/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java b/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
-index 1d5b614c7157f08a49571f9dd338e2ba712ece98..5b366b4ce5f035c62bb713d01817ce901c9a69b6 100644
+index 1d5b614c7157f08a49571f9dd338e2ba712ece98..fa17e4fd0dbf80b7d9e9d02a9dff64c3fa14e93e 100644
 --- a/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
 @@ -219,6 +219,7 @@ public class LevelStorageSource {
                  // CraftBukkit start - Add PDC to world
                  PrimaryLevelData worldDataServer = PrimaryLevelData.parse(dynamic, datafixer, i, nbttagcompound2, worldsettings, levelversion, (WorldGenSettings) pair.getFirst(), (Lifecycle) pair.getSecond());
                  worldDataServer.pdc = nbttagcompound1.get("BukkitValues");
-+                worldDataServer.creativeLevel = nbttagcompound1.getBoolean("NabServer.CreativeLevel"); // NabServer
++                worldDataServer.creativeLevel = nbttagcompound1.getBoolean("Nabulus.CreativeLevel"); // Nabulus
                  return worldDataServer;
                  // CraftBukkit end
              } catch (Exception exception) {
 diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
-index 2ae71dd7fbbd2017c9faaa69c3fa2d4c0a0db069..99e1085ca43788cf52fb645af2efb50fd4770d76 100644
+index 2ae71dd7fbbd2017c9faaa69c3fa2d4c0a0db069..78c2dbc2c780900ec632a0b6a12adbb827a9e46b 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 @@ -88,6 +88,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
@@ -160,7 +160,7 @@ index 2ae71dd7fbbd2017c9faaa69c3fa2d4c0a0db069..99e1085ca43788cf52fb645af2efb50f
  
          levelNbt.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
          this.world.getWorld().storeBukkitValues(levelNbt); // CraftBukkit - add pdc
-+        levelNbt.putBoolean("NabServer.CreativeLevel", this.creativeLevel); // NabServer
++        levelNbt.putBoolean("Nabulus.CreativeLevel", this.creativeLevel); // Nabulus
      }
  
      @Override

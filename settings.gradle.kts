@@ -5,6 +5,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = "nabserver"
+rootProject.name = "nabulus"
 
-include("nabserver-api", "nabserver-server")
+include("nabulus-api", "nabulus-server")

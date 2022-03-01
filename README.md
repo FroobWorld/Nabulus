@@ -1,3 +1,3 @@
-# NabServer
+# Nabulus
 
-NabServer is a Paper fork that serves as FroobWorld's server software.
+Nabulus is a Paper fork that serves as FroobWorld's server software.

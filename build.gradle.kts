@@ -50,7 +50,7 @@ subprojects {
 }
 
 paperweight {
-    serverProject.set(project(":nabserver-server"))
+    serverProject.set(project(":nabulus-server"))
 
     remapRepo.set("https://maven.fabricmc.net/")
     decompileRepo.set("https://files.minecraftforge.net/maven/")
@@ -58,10 +58,10 @@ paperweight {
     usePaperUpstream(providers.gradleProperty("paperRef")) {
         withPaperPatcher {
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
-            apiOutputDir.set(layout.projectDirectory.dir("nabserver-api"))
+            apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
 
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
-            serverOutputDir.set(layout.projectDirectory.dir("nabserver-server"))
+            serverOutputDir.set(layout.projectDirectory.dir("nabulus-server"))
         }
     }
 }
@@ -71,7 +71,7 @@ paperweight {
 //
 
 tasks.generateDevelopmentBundle {
-    apiCoordinates.set("com.froobworld.nabserver:nabserver-api")
+    apiCoordinates.set("com.froobworld.nabulus:nabulus-api")
     mojangApiCoordinates.set("io.papermc.paper:paper-mojangapi")
     libraryRepositories.set(
         listOf(
