@@ -5,7 +5,7 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 470dbed47830e2f580c090bc762a7be5cf389ce5..d536389e184ec9e9916b6f619020bf2476e7e61d 100644
+index 470dbed47830e2f580c090bc762a7be5cf389ce5..9e5fe03578686fe4a9af31b44b4b88719189f3dc 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -556,6 +556,7 @@ public class ServerPlayer extends Player {
@@ -24,8 +24,15 @@ index 470dbed47830e2f580c090bc762a7be5cf389ce5..d536389e184ec9e9916b6f619020bf24
                  worldserver.addDuringPortalTeleport(this);
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition(); // CraftBukkit - sync position after changing it (from PortalTravelAgent#findAndteleport)
-@@ -1722,6 +1724,11 @@ public class ServerPlayer extends Player {
+@@ -1720,8 +1722,18 @@ public class ServerPlayer extends Player {
+     }
+ 
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
++        // Nabulus start
++        this.restoreFrom(oldPlayer, alive, false);
++    }
++    public void restoreFrom(ServerPlayer oldPlayer, boolean alive, boolean toOrFromCreativeLevel) {
++        // Nabulus end
          this.textFilteringEnabled = oldPlayer.textFilteringEnabled;
          this.gameMode.setGameModeForPlayer(oldPlayer.gameMode.getGameModeForPlayer(), oldPlayer.gameMode.getPreviousGameModeForPlayer());
 +        // Nabulus start
@@ -36,8 +43,37 @@ index 470dbed47830e2f580c090bc762a7be5cf389ce5..d536389e184ec9e9916b6f619020bf24
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
+@@ -1748,6 +1760,7 @@ public class ServerPlayer extends Player {
+         // this.recipeBook.copyOverData(entityplayer.recipeBook); // CraftBukkit
+         this.seenCredits = oldPlayer.seenCredits;
+         this.enteredNetherPosition = oldPlayer.enteredNetherPosition;
++        if (toOrFromCreativeLevel) return; // Nabulus
+         this.setShoulderEntityLeft(oldPlayer.getShoulderEntityLeft());
+         this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
+     }
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 7a0c1ba40156df69bbbf36d96bed0950130d2351..4fcd25a8ea9a2c64e31e3baf8bcd570ea77c064e 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -846,8 +846,15 @@ public abstract class PlayerList {
+         entityplayer.wonGame = false;
+         // CraftBukkit end
+ 
++        // Nabulus start
++        boolean toOrFromCreativeLevel = ((net.minecraft.world.level.storage.PrimaryLevelData) worldserver.levelData).creativeLevel || ((net.minecraft.world.level.storage.PrimaryLevelData) entityplayer.level.levelData).creativeLevel;
++        if (toOrFromCreativeLevel) {
++            entityplayer.releaseLeftShoulderEntity();
++            entityplayer.releaseRightShoulderEntity();
++        }
++        // Nabulus end
+         entityplayer1.connection = entityplayer.connection;
+-        entityplayer1.restoreFrom(entityplayer, flag);
++        entityplayer1.restoreFrom(entityplayer, flag, toOrFromCreativeLevel); // Nabulus
+         entityplayer1.setId(entityplayer.getId());
+         entityplayer1.setMainArm(entityplayer.getMainArm());
+         Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 9ca080e2745686fc2e39485965ec54c5de0bae6e..16ee955f744a9e04d4d791d934fb779fe545d33c 100644
+index 9ca080e2745686fc2e39485965ec54c5de0bae6e..a621734aefe63057d0300a185943d2214201afc2 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -2286,6 +2286,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
@@ -48,6 +84,30 @@ index 9ca080e2745686fc2e39485965ec54c5de0bae6e..16ee955f744a9e04d4d791d934fb779f
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
+@@ -3206,6 +3207,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
+         }
+         // Paper end
+         if (this.level instanceof ServerLevel && !this.isRemoved()) {
++            // Nabulus start
++            if (!this.level.equals(worldserver) && ((net.minecraft.world.level.storage.PrimaryLevelData) this.level.levelData).creativeLevel) {
++                return null;
++            }
++            // Nabulus end
+             this.level.getProfiler().push("changeDimension");
+             // CraftBukkit start
+             // this.decouple();
+@@ -3291,6 +3297,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
+         if (destination == null) {
+             return null;
+         }
++        // Nabulus start
++        if (((net.minecraft.world.level.storage.PrimaryLevelData) this.level.levelData).creativeLevel) {
++            return null;
++        }
++        // Nabulus end
+         boolean flag = this.level.getTypeKey() == LevelStem.END && destination.getTypeKey() == LevelStem.OVERWORLD; // fromEndToOverworld
+         boolean flag1 = destination.getTypeKey() == LevelStem.END; // targetIsEnd
+         // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
 index d85da02be7f1d494af8f2cc840c49073774f5f9c..18f41f7ac10b9e6af301f39394728eddfddbea51 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java

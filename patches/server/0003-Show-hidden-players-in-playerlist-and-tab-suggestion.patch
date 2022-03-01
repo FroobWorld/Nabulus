@@ -18,7 +18,7 @@ index a0614ca229de8c6e34a48c4c125e6e7665249d96..a9d93ccf6aec709f26cf5e8f5b06497d
          // CraftBukkit end
          Component ichatbasecomponent = ComponentUtils.formatList(list, nameProvider);
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 7a0c1ba40156df69bbbf36d96bed0950130d2351..dff0c3652753b4c44616c734b37129b29bee8008 100644
+index 4fcd25a8ea9a2c64e31e3baf8bcd570ea77c064e..ea8f809592bd086ecbb64c8a04b99a747594df22 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -382,11 +382,11 @@ public abstract class PlayerList {
@@ -43,7 +43,7 @@ index 7a0c1ba40156df69bbbf36d96bed0950130d2351..dff0c3652753b4c44616c734b37129b2
                  entityplayer2.getBukkitEntity().onEntityRemove(entityplayer);
              }
          }
-@@ -1017,7 +1018,7 @@ public abstract class PlayerList {
+@@ -1024,7 +1025,7 @@ public abstract class PlayerList {
                  target.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.players.stream().filter(new Predicate<ServerPlayer>() {
                      @Override
                      public boolean apply(ServerPlayer input) {
