@@ -5,7 +5,7 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 470dbed47830e2f580c090bc762a7be5cf389ce5..9e0ae502378ea59a0a538ce3f6961cf12b1fe9d7 100644
+index 470dbed47830e2f580c090bc762a7be5cf389ce5..74bf95c98bbf4959b9697940c1bf557c8a1a2e71 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -556,6 +556,7 @@ public class ServerPlayer extends Player {
@@ -30,7 +30,7 @@ index 470dbed47830e2f580c090bc762a7be5cf389ce5..9e0ae502378ea59a0a538ce3f6961cf1
          this.gameMode.setGameModeForPlayer(oldPlayer.gameMode.getGameModeForPlayer(), oldPlayer.gameMode.getPreviousGameModeForPlayer());
 +        // NabServer start
 +        this.normalInventory.replaceWith(oldPlayer.normalInventory);
-+        this.creativeLevelInventory.replaceWith(oldPlayer.normalInventory);
++        this.creativeLevelInventory.replaceWith(oldPlayer.creativeLevelInventory);
 +        this.usingNormalInventory = oldPlayer.usingNormalInventory;
 +        // NabServer end
          if (alive) {
@@ -49,19 +49,23 @@ index 9ca080e2745686fc2e39485965ec54c5de0bae6e..0e6e009309e3dc7aef49332f296b283c
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index d85da02be7f1d494af8f2cc840c49073774f5f9c..0abe3bea01651d0dffc98664a2f32486ebfa6558 100644
+index d85da02be7f1d494af8f2cc840c49073774f5f9c..6dd347282ca052abcb7c59265ea5f3844b6b6661 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -191,12 +191,43 @@ public abstract class Player extends LivingEntity {
+@@ -191,12 +191,47 @@ public abstract class Player extends LivingEntity {
      }
      // CraftBukkit end
  
 +    // NabServer start
 +    protected final Inventory normalInventory = new Inventory(this);
 +    protected final Inventory creativeLevelInventory = new Inventory(this);
++    private boolean inventoriesLoaded = false;
 +    public boolean usingNormalInventory = true;
 +
 +    public void chooseInventory() {
++        if (!inventoriesLoaded) {
++            return;
++        }
 +        if (((net.minecraft.world.level.storage.PrimaryLevelData)this.level.levelData).creativeLevel) {
 +            if (usingNormalInventory) {
 +                this.normalInventory.replaceWith(this.inventory);
@@ -96,7 +100,7 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..0abe3bea01651d0dffc98664a2f32486
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
          this.containerMenu = this.inventoryMenu;
          this.moveTo((double) pos.getX() + 0.5D, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D, yaw, 0.0F);
-@@ -835,6 +866,14 @@ public abstract class Player extends LivingEntity {
+@@ -835,6 +870,16 @@ public abstract class Player extends LivingEntity {
  
          this.inventory.load(nbttaglist);
          this.inventory.selected = nbt.getInt("SelectedItemSlot");
@@ -107,11 +111,13 @@ index d85da02be7f1d494af8f2cc840c49073774f5f9c..0abe3bea01651d0dffc98664a2f32486
 +        ListTag creativeLevelInventoryTagList = nbt.getList("NabServer.CreativeLevelInventory", 10);
 +        this.creativeLevelInventory.load(creativeLevelInventoryTagList);
 +        this.creativeLevelInventory.selected = nbt.getInt("NabServer.CreativeLevelSelectedItemSlot");
++        this.inventoriesLoaded = true;
++        this.usingNormalInventory = true;
 +        // NabServer end
          this.sleepCounter = nbt.getShort("SleepTimer");
          this.experienceProgress = nbt.getFloat("XpP");
          this.experienceLevel = nbt.getInt("XpLevel");
-@@ -866,8 +905,12 @@ public abstract class Player extends LivingEntity {
+@@ -866,8 +911,12 @@ public abstract class Player extends LivingEntity {
      public void addAdditionalSaveData(CompoundTag nbt) {
          super.addAdditionalSaveData(nbt);
          nbt.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
