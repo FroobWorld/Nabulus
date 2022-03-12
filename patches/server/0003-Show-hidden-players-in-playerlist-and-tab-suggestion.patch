@@ -66,7 +66,7 @@ index 7b562ef1bb3a72581cdd5e21581589f1404eb807..6f461aeb8b5cbe4c4cb4f8b7e8d20781
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 6feeadad9aecb7d63e24d5daae115a93e39aeb3d..97626ae5a48afbedc76bf2b0e85eb0c6c224bf7f 100644
+index 6feeadad9aecb7d63e24d5daae115a93e39aeb3d..e1f7416c1c1fe7c1dbd8586d5201c8d1215cf1d2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -410,7 +410,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -87,7 +87,34 @@ index 6feeadad9aecb7d63e24d5daae115a93e39aeb3d..97626ae5a48afbedc76bf2b0e85eb0c6
                  player.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -2119,13 +2119,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1507,11 +1507,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         // Remove this entity from the hidden player's EntityTrackerEntry
+         // Paper start
+         Entity other = ((CraftEntity) entity).getHandle();
+-        unregisterEntity(other);
++        unregisterEntity(other, false); // Nabulus
+ 
+         server.getPluginManager().callEvent(new PlayerHideEntityEvent(this, entity));
+     }
+     private void unregisterEntity(Entity other) {
++        // Nabulus start
++        unregisterEntity(other, true);
++    }
++    private void unregisterEntity(Entity other, boolean removeFromPlayerList) {
++        // Nabulus end
+         // Paper end
+         ChunkMap tracker = ((ServerLevel) this.getHandle().level).getChunkSource().chunkMap;
+         ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
+@@ -1520,7 +1525,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         }
+ 
+         // Remove the hidden entity from this player user list, if they're on it
+-        if (other instanceof ServerPlayer) {
++        if (other instanceof ServerPlayer && removeFromPlayerList) { // Nabulus
+             ServerPlayer otherPlayer = (ServerPlayer) other;
+             if (otherPlayer.sentListPacket) {
+                 this.getHandle().connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, otherPlayer));
+@@ -2119,13 +2124,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
          // Paper end
      }
