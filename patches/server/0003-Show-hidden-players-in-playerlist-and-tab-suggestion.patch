@@ -53,7 +53,7 @@ index 25603c57817a1965e387cf62bc58ed45723fac2c..ab911590dd3526ab238d54955ca62f41
                  }).collect(Collectors.toList())));
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index f56ce5263741c38dd568a522008b75cbf96deacf..1781853ecac7d2e801f8f59cffdbb21e92459266 100644
+index 7b562ef1bb3a72581cdd5e21581589f1404eb807..6f461aeb8b5cbe4c4cb4f8b7e8d207819d166d74 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -2229,7 +2229,7 @@ public final class CraftServer implements Server {
@@ -66,7 +66,7 @@ index f56ce5263741c38dd568a522008b75cbf96deacf..1781853ecac7d2e801f8f59cffdbb21e
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 603e9234294c01f1cde4bfc0b0053e69b99861d9..85f3de2cee68bd39e7f56549713265cdf9b562ff 100644
+index 6feeadad9aecb7d63e24d5daae115a93e39aeb3d..97626ae5a48afbedc76bf2b0e85eb0c6c224bf7f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -410,7 +410,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -87,7 +87,7 @@ index 603e9234294c01f1cde4bfc0b0053e69b99861d9..85f3de2cee68bd39e7f56549713265cd
                  player.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -2130,13 +2130,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2119,13 +2119,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
          // Paper end
      }
