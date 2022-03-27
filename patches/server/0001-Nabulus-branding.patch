@@ -42,10 +42,10 @@ index 4beb35d1e5b013395f5df101e843f41c2ce174ad..cb051faa835a1800204dd34f1d837ed3
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 39b7c78b032ed6fc29ac765020d5a38858bf2a3a..e9f62d256654cf5655bd324bb392479eb618990d 100644
+index c8d56947305c981a3268ce4ae3e975db350ceff2..20648af8c09d35eceaa100c9609e4652e412b10e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1697,7 +1697,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1693,7 +1693,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -55,7 +55,7 @@ index 39b7c78b032ed6fc29ac765020d5a38858bf2a3a..e9f62d256654cf5655bd324bb392479e
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 55c981f2c8070fc1bd9ecd4f4df140d9d0c68319..7b562ef1bb3a72581cdd5e21581589f1404eb807 100644
+index 5be9e73dc0314831bbaa6301fc704295dd8ed2bc..001b86a9a60d90811b1e45610b0c1dccaa417640 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper

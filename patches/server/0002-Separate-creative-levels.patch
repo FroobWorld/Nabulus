@@ -109,7 +109,7 @@ index 84fce7dccf9232209f939a32acfc3131e62eb27c..057871b6e11b36e9a6cdedb0427f88d6
          boolean flag1 = destination.getTypeKey() == LevelStem.END; // targetIsEnd
          // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 9c767096ca950d55d6002282c7a3fe2884bcd630..d1b4a6edea8bcebeffd2678bdd58c10ce9f7aa0f 100644
+index 2483d7df7f1bf94344afd38b37602c645a4a2dff..d2159874f6e61466004cdb16e9f2a592ec7b1670 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -192,12 +192,47 @@ public abstract class Player extends LivingEntity {
@@ -160,7 +160,7 @@ index 9c767096ca950d55d6002282c7a3fe2884bcd630..d1b4a6edea8bcebeffd2678bdd58c10c
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
          this.containerMenu = this.inventoryMenu;
          this.moveTo((double) pos.getX() + 0.5D, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D, yaw, 0.0F);
-@@ -845,6 +880,16 @@ public abstract class Player extends LivingEntity {
+@@ -848,6 +883,16 @@ public abstract class Player extends LivingEntity {
  
          this.inventory.load(nbttaglist);
          this.inventory.selected = nbt.getInt("SelectedItemSlot");
@@ -177,7 +177,7 @@ index 9c767096ca950d55d6002282c7a3fe2884bcd630..d1b4a6edea8bcebeffd2678bdd58c10c
          this.sleepCounter = nbt.getShort("SleepTimer");
          this.experienceProgress = nbt.getFloat("XpP");
          this.experienceLevel = nbt.getInt("XpLevel");
-@@ -876,8 +921,12 @@ public abstract class Player extends LivingEntity {
+@@ -879,8 +924,12 @@ public abstract class Player extends LivingEntity {
      public void addAdditionalSaveData(CompoundTag nbt) {
          super.addAdditionalSaveData(nbt);
          nbt.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
