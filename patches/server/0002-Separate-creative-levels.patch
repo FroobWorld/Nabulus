@@ -5,7 +5,7 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index e74c13e7aaa144fcd07036de70e80bebf0be698a..a91a224a1f4dfe3c2e4773394bde55650a7ab558 100644
+index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e27e26e3a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -554,6 +554,7 @@ public class ServerPlayer extends Player {
@@ -16,7 +16,7 @@ index e74c13e7aaa144fcd07036de70e80bebf0be698a..a91a224a1f4dfe3c2e4773394bde5565
      }
      // CraftBukkit end
  
-@@ -1141,6 +1142,7 @@ public class ServerPlayer extends Player {
+@@ -1143,6 +1144,7 @@ public class ServerPlayer extends Player {
  
                  // CraftBukkit end
                  this.setLevel(worldserver);
@@ -24,7 +24,7 @@ index e74c13e7aaa144fcd07036de70e80bebf0be698a..a91a224a1f4dfe3c2e4773394bde5565
                  worldserver.addDuringPortalTeleport(this);
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition(); // CraftBukkit - sync position after changing it (from PortalTravelAgent#findAndteleport)
-@@ -1718,8 +1720,18 @@ public class ServerPlayer extends Player {
+@@ -1720,8 +1722,18 @@ public class ServerPlayer extends Player {
      }
  
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
@@ -43,7 +43,7 @@ index e74c13e7aaa144fcd07036de70e80bebf0be698a..a91a224a1f4dfe3c2e4773394bde5565
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
-@@ -1746,6 +1758,7 @@ public class ServerPlayer extends Player {
+@@ -1748,6 +1760,7 @@ public class ServerPlayer extends Player {
          // this.recipeBook.copyOverData(entityplayer.recipeBook); // CraftBukkit
          this.seenCredits = oldPlayer.seenCredits;
          this.enteredNetherPosition = oldPlayer.enteredNetherPosition;
@@ -73,10 +73,10 @@ index 02dc93c394d37c9a84aa4a58d80615c403c54fb9..25603c57817a1965e387cf62bc58ed45
          entityplayer1.setMainArm(entityplayer.getMainArm());
          Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 84fce7dccf9232209f939a32acfc3131e62eb27c..057871b6e11b36e9a6cdedb0427f88d67df315ce 100644
+index 49cf3601df7b145d49b1fe9a71ba0bc60c5394b3..3a9b391263ae055bd79c006e0f8e4d51dcab495f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -2291,6 +2291,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
+@@ -2291,6 +2291,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  // Paper end - Move player to spawn point if spawn in unloaded world
  
                  ((ServerPlayer) this).setLevel(bworld == null ? null : ((CraftWorld) bworld).getHandle());
@@ -84,7 +84,7 @@ index 84fce7dccf9232209f939a32acfc3131e62eb27c..057871b6e11b36e9a6cdedb0427f88d6
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
-@@ -3241,6 +3242,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
+@@ -3226,6 +3227,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level instanceof ServerLevel && !this.isRemoved()) {
@@ -96,7 +96,7 @@ index 84fce7dccf9232209f939a32acfc3131e62eb27c..057871b6e11b36e9a6cdedb0427f88d6
              this.level.getProfiler().push("changeDimension");
              // CraftBukkit start
              // this.decouple();
-@@ -3326,6 +3332,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, i
+@@ -3311,6 +3317,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          if (destination == null) {
              return null;
          }
