@@ -5,10 +5,10 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e27e26e3a 100644
+index 22452aa7eefa350c3b0d0d19a23c76c8ec811de3..e3b290cdfd9387ced10b05cf742e2edaceac3888 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -554,6 +554,7 @@ public class ServerPlayer extends Player {
+@@ -555,6 +555,7 @@ public class ServerPlayer extends Player {
              this.setPosRaw(position.x(), position.y(), position.z()); // Paper - don't register to chunks yet
          }
          this.gameMode.setLevel((ServerLevel) world);
@@ -16,7 +16,7 @@ index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e
      }
      // CraftBukkit end
  
-@@ -1143,6 +1144,7 @@ public class ServerPlayer extends Player {
+@@ -1148,6 +1149,7 @@ public class ServerPlayer extends Player {
  
                  // CraftBukkit end
                  this.setLevel(worldserver);
@@ -24,7 +24,7 @@ index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e
                  worldserver.addDuringPortalTeleport(this);
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition(); // CraftBukkit - sync position after changing it (from PortalTravelAgent#findAndteleport)
-@@ -1720,8 +1722,18 @@ public class ServerPlayer extends Player {
+@@ -1725,8 +1727,18 @@ public class ServerPlayer extends Player {
      }
  
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
@@ -43,7 +43,7 @@ index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
-@@ -1748,6 +1760,7 @@ public class ServerPlayer extends Player {
+@@ -1753,6 +1765,7 @@ public class ServerPlayer extends Player {
          // this.recipeBook.copyOverData(entityplayer.recipeBook); // CraftBukkit
          this.seenCredits = oldPlayer.seenCredits;
          this.enteredNetherPosition = oldPlayer.enteredNetherPosition;
@@ -52,7 +52,7 @@ index fd8675f74ea787906b83d863940959efbf8bfac9..226ab20d515993e6daa5f1b56e391a8e
          this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
      }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 02dc93c394d37c9a84aa4a58d80615c403c54fb9..25603c57817a1965e387cf62bc58ed45723fac2c 100644
+index 188c68d4ae46bc05c6d9c901b5c6ab883fa05ea4..86877f33e82f6b18a873d064a5534c0371c0fe7b 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -853,8 +853,15 @@ public abstract class PlayerList {
