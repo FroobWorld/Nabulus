@@ -18,7 +18,7 @@ index a0614ca229de8c6e34a48c4c125e6e7665249d96..a9d93ccf6aec709f26cf5e8f5b06497d
          // CraftBukkit end
          Component ichatbasecomponent = ComponentUtils.formatList(list, nameProvider);
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 04cdf50c898809b18b1db4255a3b37688a1f4ea0..e9bed45a12677d493d308e6c158f6dc2272d958c 100644
+index ff62155be56c0f9a02f81bd0873f93149e56fdfb..266bfc7c90ad0ce53c398ca3551651472d9028f6 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -382,11 +382,11 @@ public abstract class PlayerList {
@@ -53,10 +53,10 @@ index 04cdf50c898809b18b1db4255a3b37688a1f4ea0..e9bed45a12677d493d308e6c158f6dc2
                  }).collect(Collectors.toList())));
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index e17685ba1876461d8aeaae98a50b07b22ac6bdf1..573ad66241998c2b422e8e7f61efa3f75d844e1f 100644
+index dcc2adbb90c5658e3f319f6e97434baffc6a4b4a..aa6a108a387ccc1f539fad22acaa97bada1ceda4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2236,7 +2236,7 @@ public final class CraftServer implements Server {
+@@ -2243,7 +2243,7 @@ public final class CraftServer implements Server {
          PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
          String token = event.getLastToken();
          for (Player p : this.getOnlinePlayers()) {
@@ -66,7 +66,7 @@ index e17685ba1876461d8aeaae98a50b07b22ac6bdf1..573ad66241998c2b422e8e7f61efa3f7
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index f12efe51b14ed3637a8ba45def9c94634a6f5e8f..e0456e79991e2df64cd8bff3aeaa648bfc32937f 100644
+index ce78e024244c14530270b8276e5b0fd853f0a110..18a557b0a3456a63af8b8c2a69fd4f076a6bcd51 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -420,7 +420,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -87,7 +87,7 @@ index f12efe51b14ed3637a8ba45def9c94634a6f5e8f..e0456e79991e2df64cd8bff3aeaa648b
                  player.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -1595,11 +1595,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1601,11 +1601,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          // Remove this entity from the hidden player's EntityTrackerEntry
          // Paper start
          Entity other = ((CraftEntity) entity).getHandle();
@@ -105,7 +105,7 @@ index f12efe51b14ed3637a8ba45def9c94634a6f5e8f..e0456e79991e2df64cd8bff3aeaa648b
          // Paper end
          ChunkMap tracker = ((ServerLevel) this.getHandle().level).getChunkSource().chunkMap;
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
-@@ -1608,7 +1613,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1614,7 +1619,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
  
          // Remove the hidden entity from this player user list, if they're on it
@@ -114,7 +114,7 @@ index f12efe51b14ed3637a8ba45def9c94634a6f5e8f..e0456e79991e2df64cd8bff3aeaa648b
              ServerPlayer otherPlayer = (ServerPlayer) other;
              if (otherPlayer.sentListPacket) {
                  this.getHandle().connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, otherPlayer));
-@@ -2207,13 +2212,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2213,13 +2218,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
          // Paper end
      }
