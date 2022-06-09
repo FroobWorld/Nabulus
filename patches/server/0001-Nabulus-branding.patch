@@ -5,7 +5,7 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 0282e3b75470e1a68ea1fc228082483514ba432e..11b7daeba33ee676f982459e14679403e5b2ffae 100644
+index eefbd0a742b5875e0e9826b87c6bd4da66b2d7f7..4687559f900749d574259169a90acb8a2e1790cf 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,8 +9,12 @@ plugins {
@@ -23,7 +23,7 @@ index 0282e3b75470e1a68ea1fc228082483514ba432e..11b7daeba33ee676f982459e14679403
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -60,7 +64,7 @@ tasks.jar {
+@@ -62,7 +66,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -32,7 +32,7 @@ index 0282e3b75470e1a68ea1fc228082483514ba432e..11b7daeba33ee676f982459e14679403
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
-@@ -148,7 +152,7 @@ fun TaskContainer.registerRunTask(
+@@ -150,7 +154,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
@@ -42,10 +42,10 @@ index 0282e3b75470e1a68ea1fc228082483514ba432e..11b7daeba33ee676f982459e14679403
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index da15a224b8b974e78b9d8d5f514229b3b2a5a63e..c03a60c4f60346f348dc3315ca0607a651606774 100644
+index c3ca919ed60f027d6116a85cb79e3b6cd3bf1619..4ef4aad889fd98006e54523fe9905367f59f7ca5 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1696,7 +1696,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1654,7 +1654,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -55,10 +55,10 @@ index da15a224b8b974e78b9d8d5f514229b3b2a5a63e..c03a60c4f60346f348dc3315ca0607a6
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 8a248e34fce1e04de4460f98b7627df495c66af1..dcc2adbb90c5658e3f319f6e97434baffc6a4b4a 100644
+index a7a038835579c599368e409b86cc5eecf0013952..e660294e5d682633cc224be467062a970821e186 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -249,7 +249,7 @@ import javax.annotation.Nullable; // Paper
+@@ -243,7 +243,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
