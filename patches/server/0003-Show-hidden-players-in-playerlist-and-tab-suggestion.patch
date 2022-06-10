@@ -66,7 +66,7 @@ index e660294e5d682633cc224be467062a970821e186..f3ea74f4a2f7eec3afdd31a70cf37f54
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 04b991ec6a808839df1d2b5037ad386bda5094fe..8995b881b865078b5c95daa7ad7b4bb13a90ee40 100644
+index 04b991ec6a808839df1d2b5037ad386bda5094fe..264a13c0153e36bcd883d4f436e72e18ec92cd8c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -417,7 +417,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -114,19 +114,3 @@ index 04b991ec6a808839df1d2b5037ad386bda5094fe..8995b881b865078b5c95daa7ad7b4bb1
              ServerPlayer otherPlayer = (ServerPlayer) other;
              if (otherPlayer.sentListPacket) {
                  this.getHandle().connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, otherPlayer));
-@@ -2175,13 +2180,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
-         }
-         // Paper end
-     }
--    
-+
-     @Override
-     public void sendHealthUpdate() {
-         this.sendHealthUpdate(this.getScaledHealth(), this.getHandle().getFoodData().getFoodLevel(), this.getHandle().getFoodData().getSaturationLevel());
-     }
-     // Paper end
--    
-+
-     public void injectScaledMaxHealth(Collection<AttributeInstance> collection, boolean force) {
-         if (!this.scaledHealth && !force) {
-             return;
