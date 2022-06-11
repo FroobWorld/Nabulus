@@ -16,7 +16,7 @@ index eefbd0a742b5875e0e9826b87c6bd4da66b2d7f7..4687559f900749d574259169a90acb8a
 -    implementation(project(":paper-mojangapi"))
 +    // Nabulus start
 +    implementation(project(":nabulus-api"))
-+    implementation("io.papermc.paper:paper-mojangapi:1.18.2-R0.1-SNAPSHOT") {
++    implementation("io.papermc.paper:paper-mojangapi:1.19-R0.1-SNAPSHOT") {
 +        exclude("io.papermc.paper", "paper-api")
 +    }
 +    // Nabulus end
