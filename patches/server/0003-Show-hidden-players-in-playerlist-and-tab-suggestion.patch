@@ -53,10 +53,10 @@ index 45e826ce98974aad3ce38c3f0b81fc2e171730a1..ad8a36d28daab9e20301c2432332016f
                  }).collect(Collectors.toList())));
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index de37e6e6339fb923e43f62af8377521d8370b12a..787e647f1a4212d390c43d939cc0bda7f0b0b9d8 100644
+index 5b91f0e9b77c9eb392e279ed0d36d44a1b456adf..b9cd533032fed80c24d7c913e8ce8c66694ce2b8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2223,7 +2223,7 @@ public final class CraftServer implements Server {
+@@ -2245,7 +2245,7 @@ public final class CraftServer implements Server {
          PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
          String token = event.getLastToken();
          for (Player p : this.getOnlinePlayers()) {
