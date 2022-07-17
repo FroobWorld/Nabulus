@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sun, 17 Jul 2022 12:59:38 +0930
+Subject: [PATCH] Ignore chat order
+
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 630a762b71861bfe21c47a11d4fe05e1a3b7d339..90909beaa9e06b1eb6ff9539171ff1830f8b1230 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -2158,7 +2158,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+     }
+ 
+     private boolean tryHandleChat(String s, Instant instant) {
+-        if (!this.updateChatOrder(instant)) {
++        if (!this.updateChatOrder(instant) && false) { // Nabulus
+             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}'", this.player.getName().getString(), s);
+             this.server.scheduleOnMain(() -> { // Paper - push to main
+             this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"));
