@@ -5,7 +5,7 @@ Subject: [PATCH] Ignore chat order
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 630a762b71861bfe21c47a11d4fe05e1a3b7d339..90909beaa9e06b1eb6ff9539171ff1830f8b1230 100644
+index 1290f1c33062b2ea821abca33433a53662b6d340..7c7381f7dfce6933bdd91f386348e935c4e01175 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -2158,7 +2158,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
@@ -14,6 +14,6 @@ index 630a762b71861bfe21c47a11d4fe05e1a3b7d339..90909beaa9e06b1eb6ff9539171ff183
      private boolean tryHandleChat(String s, Instant instant) {
 -        if (!this.updateChatOrder(instant)) {
 +        if (!this.updateChatOrder(instant) && false) { // Nabulus
-             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}'", this.player.getName().getString(), s);
+             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}'; {} > {}", this.player.getName().getString(), s, this.lastChatTimeStamp.get().getEpochSecond(), instant.getEpochSecond()); // Paper
              this.server.scheduleOnMain(() -> { // Paper - push to main
              this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"));
