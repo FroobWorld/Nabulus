@@ -53,7 +53,7 @@ index 45e826ce98974aad3ce38c3f0b81fc2e171730a1..ad8a36d28daab9e20301c2432332016f
                  }).collect(Collectors.toList())));
              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 618918ea2b31284d2bb79776c8510eb6b470a917..73ccc0a221530ce620c01384c911822e9d2e70b5 100644
+index 1cbd3608764d753cc60969ecd2534ededdbfddcc..5f052acacbedb0a433797b4de8c1b4c053335d94 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -2248,7 +2248,7 @@ public final class CraftServer implements Server {
@@ -66,7 +66,7 @@ index 618918ea2b31284d2bb79776c8510eb6b470a917..73ccc0a221530ce620c01384c911822e
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 287520f91e22309e1268be1940e0fafb628980a9..3055a8615ce5eb13feaefed2a1a9067ecaf4eb32 100644
+index d7ba155d9485128f4c7ad8ab4a2b7302a86aeb67..de3773a3fa922a1fe191185c1124744aba64bb88 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -417,7 +417,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -87,7 +87,7 @@ index 287520f91e22309e1268be1940e0fafb628980a9..3055a8615ce5eb13feaefed2a1a9067e
                  player.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -1605,11 +1605,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1684,11 +1684,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          // Remove this entity from the hidden player's EntityTrackerEntry
          // Paper start
          Entity other = ((CraftEntity) entity).getHandle();
@@ -105,7 +105,7 @@ index 287520f91e22309e1268be1940e0fafb628980a9..3055a8615ce5eb13feaefed2a1a9067e
          // Paper end
          ChunkMap tracker = ((ServerLevel) this.getHandle().level).getChunkSource().chunkMap;
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
-@@ -1618,7 +1623,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1697,7 +1702,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
  
          // Remove the hidden entity from this player user list, if they're on it

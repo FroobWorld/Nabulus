@@ -73,7 +73,7 @@ index 20cdfdb3b9351f74e89bc45b3ab972384165659a..45e826ce98974aad3ce38c3f0b81fc2e
          entityplayer1.setMainArm(entityplayer.getMainArm());
          Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 19a64b582bc042e426220e080d9c21b3a82cf3f7..8d0cb9c870c0f60a62f4e7c6eb533707328ed7b5 100644
+index 76b9beb0d8ebeee0f603d2740ba71beabbf19e25..843907dee3c38874bddbd48294ff6683dce26354 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -2375,6 +2375,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -84,7 +84,7 @@ index 19a64b582bc042e426220e080d9c21b3a82cf3f7..8d0cb9c870c0f60a62f4e7c6eb533707
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
-@@ -3318,6 +3319,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3326,6 +3327,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level instanceof ServerLevel && !this.isRemoved()) {
@@ -96,7 +96,7 @@ index 19a64b582bc042e426220e080d9c21b3a82cf3f7..8d0cb9c870c0f60a62f4e7c6eb533707
              this.level.getProfiler().push("changeDimension");
              // CraftBukkit start
              // this.decouple();
-@@ -3403,6 +3409,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3411,6 +3417,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          if (destination == null) {
              return null;
          }

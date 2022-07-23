@@ -5,10 +5,10 @@ Subject: [PATCH] Ignore chat order
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 1290f1c33062b2ea821abca33433a53662b6d340..7c7381f7dfce6933bdd91f386348e935c4e01175 100644
+index 935c482be4bf3767e197a576d0e38eac51115dd4..bd6a9d74f1c65acc76435e07ad778c749aa4b32e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2158,7 +2158,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+@@ -2164,7 +2164,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
      }
  
      private boolean tryHandleChat(String s, Instant instant) {
