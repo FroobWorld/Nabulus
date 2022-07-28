@@ -18,10 +18,10 @@ index f1a4817f8227b666820c2b513d8ded381310a678..99b7abbf4d0b17cfc4130200cd86132d
          // CraftBukkit end
          Component ichatbasecomponent = ComponentUtils.formatList(list, nameProvider);
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 45e826ce98974aad3ce38c3f0b81fc2e171730a1..ad8a36d28daab9e20301c2432332016f426e7886 100644
+index a6b28d52e668d72cd29bec241d0872ee8eec1c2f..f08fe0339a925211e68228d7f1f563e5183911a5 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -382,11 +382,11 @@ public abstract class PlayerList {
+@@ -383,11 +383,11 @@ public abstract class PlayerList {
          for (int i = 0; i < this.players.size(); ++i) {
              ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);
  
@@ -35,7 +35,7 @@ index 45e826ce98974aad3ce38c3f0b81fc2e171730a1..ad8a36d28daab9e20301c2432332016f
                  continue;
              }
  
-@@ -695,6 +695,7 @@ public abstract class PlayerList {
+@@ -696,6 +696,7 @@ public abstract class PlayerList {
              if (entityplayer2.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
                  entityplayer2.connection.send(packet);
              } else {
@@ -43,10 +43,10 @@ index 45e826ce98974aad3ce38c3f0b81fc2e171730a1..ad8a36d28daab9e20301c2432332016f
                  entityplayer2.getBukkitEntity().onEntityRemove(entityplayer);
              }
          }
-@@ -1034,7 +1035,7 @@ public abstract class PlayerList {
+@@ -1035,7 +1036,7 @@ public abstract class PlayerList {
                  target.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.players.stream().filter(new Predicate<ServerPlayer>() {
                      @Override
-                     public boolean apply(ServerPlayer input) {
+                     public boolean test(ServerPlayer input) {
 -                        return target.getBukkitEntity().canSee(input.getBukkitEntity());
 +                        return target.getBukkitEntity().canSee(input.getBukkitEntity()) || true; // Nabulus
                      }
@@ -66,7 +66,7 @@ index 1cbd3608764d753cc60969ecd2534ededdbfddcc..5f052acacbedb0a433797b4de8c1b4c0
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index d7ba155d9485128f4c7ad8ab4a2b7302a86aeb67..de3773a3fa922a1fe191185c1124744aba64bb88 100644
+index d2249145046d728240cf1ae0b71c9ec16184bc18..ade53c667e90046629b606a37527caa1864521a2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -417,7 +417,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -87,7 +87,7 @@ index d7ba155d9485128f4c7ad8ab4a2b7302a86aeb67..de3773a3fa922a1fe191185c1124744a
                  player.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -1684,11 +1684,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1696,11 +1696,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          // Remove this entity from the hidden player's EntityTrackerEntry
          // Paper start
          Entity other = ((CraftEntity) entity).getHandle();
@@ -105,7 +105,7 @@ index d7ba155d9485128f4c7ad8ab4a2b7302a86aeb67..de3773a3fa922a1fe191185c1124744a
          // Paper end
          ChunkMap tracker = ((ServerLevel) this.getHandle().level).getChunkSource().chunkMap;
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
-@@ -1697,7 +1702,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1709,7 +1714,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
  
          // Remove the hidden entity from this player user list, if they're on it

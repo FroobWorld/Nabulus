@@ -5,15 +5,15 @@ Subject: [PATCH] Ignore chat order
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 935c482be4bf3767e197a576d0e38eac51115dd4..bd6a9d74f1c65acc76435e07ad778c749aa4b32e 100644
+index a14710afaabf2b3b43f18ebe52eec8befff2b4ed..99a70bbd7f732266543d97a0abd7fc2d4796ff5b 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2164,7 +2164,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+@@ -2299,7 +2299,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
      }
  
-     private boolean tryHandleChat(String s, Instant instant) {
--        if (!this.updateChatOrder(instant)) {
-+        if (!this.updateChatOrder(instant) && false) { // Nabulus
-             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}'; {} > {}", this.player.getName().getString(), s, this.lastChatTimeStamp.get().getEpochSecond(), instant.getEpochSecond()); // Paper
+     private boolean tryHandleChat(String message, Instant timestamp, LastSeenMessages.Update acknowledgment) {
+-        if (!this.updateChatOrder(timestamp)) {
++        if (!this.updateChatOrder(timestamp) && false) { // Nabulus
+             ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}': {} > {}", this.player.getName().getString(), message, this.lastChatTimeStamp.get().getEpochSecond(), timestamp.getEpochSecond()); // Paper
              this.server.scheduleOnMain(() -> { // Paper - push to main
              this.disconnect(Component.translatable("multiplayer.disconnect.out_of_order_chat"));
