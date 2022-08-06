@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sat, 6 Aug 2022 13:21:50 +0930
+Subject: [PATCH] Use system messages for player chat until Velocity support
+ added
+
+
+diff --git a/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java b/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
+index bd82f0316df85b621c1970ff30bbbec0d2712ccd..8b5a150d01870a3319b6347abd94d7cad84917b4 100644
+--- a/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
++++ b/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
+@@ -6,6 +6,7 @@ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.network.PacketSendListener;
+ import net.minecraft.network.protocol.game.ClientboundPlayerChatHeaderPacket;
+ import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
++import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.server.players.PlayerList;
+ 
+@@ -52,7 +53,7 @@ public interface OutgoingPlayerChatMessage {
+             if (!playerChatMessage.isFullyFiltered()) {
+                 RegistryAccess registryAccess = sender.level.registryAccess();
+                 ChatType.BoundNetwork boundNetwork = params.toNetwork(registryAccess);
+-                sender.connection.send(new ClientboundPlayerChatPacket(playerChatMessage, boundNetwork));
++                sender.connection.send(new ClientboundSystemChatPacket(playerChatMessage.serverContent(), false)); // Nabulus
+                 sender.connection.addPendingMessage(playerChatMessage);
+             }
+ 
+@@ -91,9 +92,14 @@ public interface OutgoingPlayerChatMessage {
+                 this.playersWithFullMessage.add(sender);
+                 RegistryAccess registryAccess = sender.level.registryAccess();
+                 ChatType.BoundNetwork boundNetwork = params.toNetwork(registryAccess);
++                // Nabulus start
++                /*
+                 sender.connection.send(new ClientboundPlayerChatPacket(playerChatMessage, boundNetwork), PacketSendListener.exceptionallySend(() -> {
+                     return new ClientboundPlayerChatHeaderPacket(this.message);
+                 }));
++                */
++                sender.connection.send(new ClientboundSystemChatPacket(playerChatMessage.serverContent(), false));
++                // Nabulus end
+                 sender.connection.addPendingMessage(playerChatMessage);
+             }
+ 
