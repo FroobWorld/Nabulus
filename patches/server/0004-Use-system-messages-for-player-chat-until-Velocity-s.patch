@@ -6,27 +6,19 @@ Subject: [PATCH] Use system messages for player chat until Velocity support
 
 
 diff --git a/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java b/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
-index bd82f0316df85b621c1970ff30bbbec0d2712ccd..8b5a150d01870a3319b6347abd94d7cad84917b4 100644
+index bd82f0316df85b621c1970ff30bbbec0d2712ccd..7e2eb2336fa563f191bfb769a4f7596c06931c4d 100644
 --- a/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
 +++ b/src/main/java/net/minecraft/network/chat/OutgoingPlayerChatMessage.java
-@@ -6,6 +6,7 @@ import net.minecraft.core.RegistryAccess;
- import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.protocol.game.ClientboundPlayerChatHeaderPacket;
- import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
-+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.server.players.PlayerList;
- 
-@@ -52,7 +53,7 @@ public interface OutgoingPlayerChatMessage {
+@@ -52,7 +52,7 @@ public interface OutgoingPlayerChatMessage {
              if (!playerChatMessage.isFullyFiltered()) {
                  RegistryAccess registryAccess = sender.level.registryAccess();
                  ChatType.BoundNetwork boundNetwork = params.toNetwork(registryAccess);
 -                sender.connection.send(new ClientboundPlayerChatPacket(playerChatMessage, boundNetwork));
-+                sender.connection.send(new ClientboundSystemChatPacket(playerChatMessage.serverContent(), false)); // Nabulus
++                sender.connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(playerChatMessage.serverContent(), false)); // Nabulus
                  sender.connection.addPendingMessage(playerChatMessage);
              }
  
-@@ -91,9 +92,14 @@ public interface OutgoingPlayerChatMessage {
+@@ -91,9 +91,14 @@ public interface OutgoingPlayerChatMessage {
                  this.playersWithFullMessage.add(sender);
                  RegistryAccess registryAccess = sender.level.registryAccess();
                  ChatType.BoundNetwork boundNetwork = params.toNetwork(registryAccess);
@@ -36,7 +28,7 @@ index bd82f0316df85b621c1970ff30bbbec0d2712ccd..8b5a150d01870a3319b6347abd94d7ca
                      return new ClientboundPlayerChatHeaderPacket(this.message);
                  }));
 +                */
-+                sender.connection.send(new ClientboundSystemChatPacket(playerChatMessage.serverContent(), false));
++                sender.connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(playerChatMessage.serverContent(), false));
 +                // Nabulus end
                  sender.connection.addPendingMessage(playerChatMessage);
              }
