@@ -5,7 +5,7 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..abf23da732ea02db2920abef22a4e827bc56d13e 100644
+index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..e562a7f9ae04f2a0ca731ce247c411e1bf032760 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,8 +9,12 @@ plugins {
@@ -16,7 +16,7 @@ index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..abf23da732ea02db2920abef22a4e827
 -    implementation(project(":paper-mojangapi"))
 +    // Nabulus start
 +    implementation(project(":nabulus-api"))
-+    implementation("io.papermc.paper:paper-mojangapi:1.19.1-R0.1-SNAPSHOT") {
++    implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
 +        exclude("io.papermc.paper", "paper-api")
 +    }
 +    // Nabulus end
@@ -42,7 +42,7 @@ index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..abf23da732ea02db2920abef22a4e827
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 46fcecbfb3f866ba89036a11113c8ad0989b04bc..234d69b4b34e500a02345791be5ce0f9957a2815 100644
+index f23be38ef96a81ce3867a3b6fdccf632fe285f31..8d3c536dffcf12a34cd969bc999da8f11cf72bde 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1655,7 +1655,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
