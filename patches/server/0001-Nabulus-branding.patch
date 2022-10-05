@@ -5,7 +5,7 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..e562a7f9ae04f2a0ca731ce247c411e1bf032760 100644
+index 44e0f265432487fe5c3c00c5245041298ade16a0..56894ce30c10e40a37593d5e545a498292cd4607 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,8 +9,12 @@ plugins {
@@ -42,10 +42,10 @@ index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..e562a7f9ae04f2a0ca731ce247c411e1
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d2161a3c3b9a2b2d463ac778656c95167c10a49d..3fbe522dd7f9663c59a9de85f147023a92aca6fd 100644
+index ce81ba5345c8d2fde8a2534b9673275c7e86af8b..a3bbe98afbeb5278b541261ee9ae96fb8ecc02c5 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1673,7 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1654,7 +1654,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -55,7 +55,7 @@ index d2161a3c3b9a2b2d463ac778656c95167c10a49d..3fbe522dd7f9663c59a9de85f147023a
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b777c1294370bdc68bc6265b039e2a405d89f2f5..a5ccdfccf484ef54017fe9a92e537d90e3706f71 100644
+index 111f8276f26350a5c62a7b8577b4598978b5355d..65bf6f8448e7fadbd1ec0fc0618801c59f01c601 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
