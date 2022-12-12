@@ -5,10 +5,10 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 44e0f265432487fe5c3c00c5245041298ade16a0..56894ce30c10e40a37593d5e545a498292cd4607 100644
+index d5d49bb2b47c889e12d17dc87b8c439a60b3fe67..40d2b2489c615565ee1188897ee3ba23bd206702 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -9,8 +9,12 @@ plugins {
+@@ -7,8 +7,12 @@ plugins {
  }
  
  dependencies {
@@ -16,14 +16,14 @@ index 44e0f265432487fe5c3c00c5245041298ade16a0..56894ce30c10e40a37593d5e545a4982
 -    implementation(project(":paper-mojangapi"))
 +    // Nabulus start
 +    implementation(project(":nabulus-api"))
-+    implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
++    implementation("io.papermc.paper:paper-mojangapi:1.19.3-R0.1-SNAPSHOT") {
 +        exclude("io.papermc.paper", "paper-api")
 +    }
 +    // Nabulus end
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -64,7 +68,7 @@ tasks.jar {
+@@ -61,7 +65,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -32,7 +32,7 @@ index 44e0f265432487fe5c3c00c5245041298ade16a0..56894ce30c10e40a37593d5e545a4982
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
-@@ -163,7 +167,7 @@ fun TaskContainer.registerRunTask(
+@@ -133,7 +137,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
@@ -42,7 +42,7 @@ index 44e0f265432487fe5c3c00c5245041298ade16a0..56894ce30c10e40a37593d5e545a4982
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index ce81ba5345c8d2fde8a2534b9673275c7e86af8b..a3bbe98afbeb5278b541261ee9ae96fb8ecc02c5 100644
+index 710ca7d3a5659953f64bc6dccdd93b43300961cc..751c8fa2881ace59052209d2c52693f53ee1e8fd 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1654,7 +1654,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -55,10 +55,10 @@ index ce81ba5345c8d2fde8a2534b9673275c7e86af8b..a3bbe98afbeb5278b541261ee9ae96fb
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 111f8276f26350a5c62a7b8577b4598978b5355d..65bf6f8448e7fadbd1ec0fc0618801c59f01c601 100644
+index 47df6f4268a63118da8187f4102c876bd37d1680..df5d41b0b2f73ce30fc0bb93e8c4424a141e1c6a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
+@@ -261,7 +261,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
