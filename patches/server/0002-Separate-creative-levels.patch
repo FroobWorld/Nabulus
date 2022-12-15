@@ -5,7 +5,7 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c0b0a7fdb75266a7064d54bda6441953184ecc64..92345263b4918069c58e07254ac4af239d5b36fa 100644
+index c0b0a7fdb75266a7064d54bda6441953184ecc64..f3c0b851cba9dd579839e5e223fcb3cb19950b4a 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -596,6 +596,7 @@ public class ServerPlayer extends Player {
@@ -16,16 +16,15 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..92345263b4918069c58e07254ac4af23
      }
      // CraftBukkit end
  
-@@ -1190,6 +1191,8 @@ public class ServerPlayer extends Player {
+@@ -1190,6 +1191,7 @@ public class ServerPlayer extends Player {
                  // CraftBukkit end
                  this.setLevel(worldserver);
                  this.moveTo(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch()); // Paper - Set the location before
 +                this.chooseInventory(); // Nabulus
-+                worldserver.addDuringPortalTeleport(this);
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  worldserver.addDuringPortalTeleport(this);
-@@ -1768,11 +1771,21 @@ public class ServerPlayer extends Player {
+@@ -1768,11 +1770,21 @@ public class ServerPlayer extends Player {
      }
  
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
@@ -47,7 +46,7 @@ index c0b0a7fdb75266a7064d54bda6441953184ecc64..92345263b4918069c58e07254ac4af23
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
-@@ -1799,6 +1812,7 @@ public class ServerPlayer extends Player {
+@@ -1799,6 +1811,7 @@ public class ServerPlayer extends Player {
          // this.recipeBook.copyOverData(entityplayer.recipeBook); // CraftBukkit
          this.seenCredits = oldPlayer.seenCredits;
          this.enteredNetherPosition = oldPlayer.enteredNetherPosition;
