@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Fri, 10 Feb 2023 19:54:12 +0930
+Subject: [PATCH] Add silent chest flag to players
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
+index f53cc9d7eef395d570086709bbd4eb6558552e82..43c8f7a007a8b7cc24c11a6f2610908b04df23be 100644
+--- a/src/main/java/net/minecraft/world/entity/player/Player.java
++++ b/src/main/java/net/minecraft/world/entity/player/Player.java
+@@ -189,6 +189,7 @@ public abstract class Player extends LivingEntity {
+     public int oldLevel = -1;
+ 
+     // Nabulus start
++    public boolean silentChests = false;
+     protected final Inventory normalInventory = new Inventory(this);
+     protected final Inventory creativeLevelInventory = new Inventory(this);
+     private boolean inventoriesLoaded = false;
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+index 3e4b3eecc788c564f81b7929bfab7d2fdb6e307d..0551d365e1bbf1fbc90e4a53a77246cd9d902199 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+@@ -40,6 +40,7 @@ public abstract class ContainerOpenersCounter {
+     protected abstract boolean isOwnContainer(Player player);
+ 
+     public void incrementOpeners(Player player, Level world, BlockPos pos, BlockState state) {
++        if (player.silentChests) return; // Nabulus
+         int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
+         int i = this.openCount++;
+ 
+@@ -63,6 +64,7 @@ public abstract class ContainerOpenersCounter {
+     }
+ 
+     public void decrementOpeners(Player player, Level world, BlockPos pos, BlockState state) {
++        if (player.silentChests) return; // Nabulus
+         int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
+         if (this.openCount == 0) return; // Paper
+         int i = this.openCount--;
+@@ -92,7 +94,7 @@ public abstract class ContainerOpenersCounter {
+         float f = 5.0F;
+         AABB axisalignedbb = new AABB((double) ((float) i - 5.0F), (double) ((float) j - 5.0F), (double) ((float) k - 5.0F), (double) ((float) (i + 1) + 5.0F), (double) ((float) (j + 1) + 5.0F), (double) ((float) (k + 1) + 5.0F));
+ 
+-        return world.getEntities(EntityTypeTest.forClass(Player.class), axisalignedbb, this::isOwnContainer).size();
++        return world.getEntities(EntityTypeTest.forClass(Player.class), axisalignedbb, player -> this.isOwnContainer(player) && !player.silentChests).size(); // Nabulus - add silent chest check
+     }
+ 
+     public void recheckOpeners(Level world, BlockPos pos, BlockState state) {
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+index b7686fd63b7c5d88c3a12ec4ee9bc01a17f997e0..d678c5ed2a9453b1f9e821e3308b642d41482a3d 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+@@ -191,7 +191,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+ 
+     @Override
+     public void startOpen(Player player) {
+-        if (!this.remove && !player.isSpectator()) {
++        if (!this.remove && !player.isSpectator() && !player.silentChests) { // Nabulus
+             if (this.openCount < 0) {
+                 this.openCount = 0;
+             }
+@@ -209,7 +209,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+ 
+     @Override
+     public void stopOpen(Player player) {
+-        if (!this.remove && !player.isSpectator()) {
++        if (!this.remove && !player.isSpectator() && !player.silentChests) { // Nabulus
+             --this.openCount;
+             if (this.opened) return; // CraftBukkit - only animate if the ShulkerBox hasn't been forced open already by an API call.
+             this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
