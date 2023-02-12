@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sun, 12 Feb 2023 10:10:22 +0930
+Subject: [PATCH] Fix pardoning uncached game profiles
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
+index 6e2047f1b45799c7a1ddfdcd24d76e6e12f91e4b..24d394d41725566abe35c474e9bfdae0543b5050 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
+@@ -92,6 +92,19 @@ public class CraftProfileBanList implements org.bukkit.BanList {
+         Validate.notNull(target, "Target cannot be null");
+ 
+         GameProfile profile = this.getProfile(target);
++        // Nabulus start
++        if (profile == null) {
++            java.util.List<GameProfile> toPardon = new java.util.ArrayList<>();
++            for (UserBanListEntry banListEntry : list.getEntries()) {
++                if (banListEntry == null || banListEntry.getUser() == null || banListEntry.getUser().getId() == null) continue;
++                if (banListEntry.getUser().getId().toString().equalsIgnoreCase(target)) {
++                    toPardon.add(banListEntry.getUser());
++                }
++            }
++            toPardon.forEach(this.list::remove);
++            return;
++        }
++        // Nabulus end
+         this.list.remove(profile);
+     }
+ 
