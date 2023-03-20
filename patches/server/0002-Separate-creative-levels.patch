@@ -5,10 +5,10 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 7d6d3c8556033d289fdadc489e73fba478fce41a..cc7ce05ce1ff0f8093ecc978d5b1817a4f4fcf48 100644
+index ca5291a9573a62cb5c19539cf5c7aceff11f9829..4f31873b953ffddcc16d54a4f951ff32f9706240 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -594,6 +594,7 @@ public class ServerPlayer extends Player {
+@@ -600,6 +600,7 @@ public class ServerPlayer extends Player {
              this.setPosRaw(position.x(), position.y(), position.z()); // Paper - don't register to chunks yet
          }
          this.gameMode.setLevel((ServerLevel) world);
@@ -16,7 +16,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..cc7ce05ce1ff0f8093ecc978d5b1817a
      }
      // CraftBukkit end
  
-@@ -1188,6 +1189,7 @@ public class ServerPlayer extends Player {
+@@ -1200,6 +1201,7 @@ public class ServerPlayer extends Player {
                  // CraftBukkit end
                  this.setLevel(worldserver);
                  this.moveTo(exit.getX(), exit.getY(), exit.getZ(), exit.getYaw(), exit.getPitch()); // Paper - Set the location before
@@ -24,7 +24,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..cc7ce05ce1ff0f8093ecc978d5b1817a
                  this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  worldserver.addDuringPortalTeleport(this);
-@@ -1766,11 +1768,21 @@ public class ServerPlayer extends Player {
+@@ -1743,11 +1745,21 @@ public class ServerPlayer extends Player {
      }
  
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
@@ -46,7 +46,7 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..cc7ce05ce1ff0f8093ecc978d5b1817a
          if (alive) {
              this.getInventory().replaceWith(oldPlayer.getInventory());
              this.setHealth(oldPlayer.getHealth());
-@@ -1797,6 +1809,7 @@ public class ServerPlayer extends Player {
+@@ -1774,6 +1786,7 @@ public class ServerPlayer extends Player {
          // this.recipeBook.copyOverData(entityplayer.recipeBook); // CraftBukkit
          this.seenCredits = oldPlayer.seenCredits;
          this.enteredNetherPosition = oldPlayer.enteredNetherPosition;
@@ -55,10 +55,10 @@ index 7d6d3c8556033d289fdadc489e73fba478fce41a..cc7ce05ce1ff0f8093ecc978d5b1817a
          this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
          this.setLastDeathLocation(oldPlayer.getLastDeathLocation());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 4b754f6eae683248d7fe11d6d6cb168d5dd696a2..c2ac3f43086f75f948a6a08f845e894c4b907990 100644
+index c0c14766adaac855112f85a203a6163b8adfdded..ccc1eb292a013e863affa21e4fb0b4f819b5a8f6 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -800,8 +800,15 @@ public abstract class PlayerList {
+@@ -807,8 +807,15 @@ public abstract class PlayerList {
          entityplayer.wonGame = false;
          // CraftBukkit end
  
@@ -76,10 +76,10 @@ index 4b754f6eae683248d7fe11d6d6cb168d5dd696a2..c2ac3f43086f75f948a6a08f845e894c
          entityplayer1.setMainArm(entityplayer.getMainArm());
          Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1eaab1f6923e6aa34b643293347348e5cc19af3c..3e0b66285b85669f1785d1496388bcff8c5c2c13 100644
+index 9a1e8589e6b371869b2199650172d61ae186c907..de31cce87bf6b17130c003d88456eeb56de0717f 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -2411,6 +2411,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2424,6 +2424,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  // Paper end - Move player to spawn point if spawn in unloaded world
  
                  ((ServerPlayer) this).setLevel(bworld == null ? null : ((CraftWorld) bworld).getHandle());
@@ -87,7 +87,7 @@ index 1eaab1f6923e6aa34b643293347348e5cc19af3c..3e0b66285b85669f1785d1496388bcff
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
-@@ -3377,6 +3378,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3396,6 +3397,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level instanceof ServerLevel && !this.isRemoved()) {
@@ -99,7 +99,7 @@ index 1eaab1f6923e6aa34b643293347348e5cc19af3c..3e0b66285b85669f1785d1496388bcff
              this.level.getProfiler().push("changeDimension");
              // CraftBukkit start
              // this.decouple();
-@@ -3462,6 +3468,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3481,6 +3487,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          if (destination == null) {
              return null;
          }
@@ -112,10 +112,10 @@ index 1eaab1f6923e6aa34b643293347348e5cc19af3c..3e0b66285b85669f1785d1496388bcff
          boolean flag1 = destination.getTypeKey() == LevelStem.END; // targetIsEnd
          // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 61597ebe2f9faff43994c475074b87d11905e582..f53cc9d7eef395d570086709bbd4eb6558552e82 100644
+index 2b02800666b358159c8ecb63208a14855f90657b..d7e28d7a2ea4814676de5cd14d9eff3a97784af3 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -188,6 +188,40 @@ public abstract class Player extends LivingEntity {
+@@ -191,6 +191,40 @@ public abstract class Player extends LivingEntity {
      public boolean fauxSleeping;
      public int oldLevel = -1;
  
@@ -156,7 +156,7 @@ index 61597ebe2f9faff43994c475074b87d11905e582..f53cc9d7eef395d570086709bbd4eb65
      @Override
      public CraftHumanEntity getBukkitEntity() {
          return (CraftHumanEntity) super.getBukkitEntity();
-@@ -201,6 +235,7 @@ public abstract class Player extends LivingEntity {
+@@ -204,6 +238,7 @@ public abstract class Player extends LivingEntity {
          this.lastDeathLocation = Optional.empty();
          this.setUUID(UUIDUtil.getOrCreatePlayerUUID(gameProfile));
          this.gameProfile = gameProfile;
@@ -164,14 +164,13 @@ index 61597ebe2f9faff43994c475074b87d11905e582..f53cc9d7eef395d570086709bbd4eb65
          this.inventoryMenu = new InventoryMenu(this.inventory, !world.isClientSide, this);
          this.containerMenu = this.inventoryMenu;
          this.moveTo((double) pos.getX() + 0.5D, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D, yaw, 0.0F);
-@@ -854,6 +889,16 @@ public abstract class Player extends LivingEntity {
+@@ -852,6 +887,15 @@ public abstract class Player extends LivingEntity {
  
          this.inventory.load(nbttaglist);
          this.inventory.selected = nbt.getInt("SelectedItemSlot");
 +        // Nabulus start
 +        this.normalInventory.load(nbttaglist);
 +        this.normalInventory.selected = nbt.getInt("SelectedItemSlot");
-+
 +        ListTag creativeLevelInventoryTagList = nbt.getList("Nabulus.CreativeLevelInventory", 10);
 +        this.creativeLevelInventory.load(creativeLevelInventoryTagList);
 +        this.creativeLevelInventory.selected = nbt.getInt("Nabulus.CreativeLevelSelectedItemSlot");
@@ -181,10 +180,10 @@ index 61597ebe2f9faff43994c475074b87d11905e582..f53cc9d7eef395d570086709bbd4eb65
          this.sleepCounter = nbt.getShort("SleepTimer");
          this.experienceProgress = nbt.getFloat("XpP");
          this.experienceLevel = nbt.getInt("XpLevel");
-@@ -893,8 +938,12 @@ public abstract class Player extends LivingEntity {
+@@ -891,8 +935,12 @@ public abstract class Player extends LivingEntity {
      public void addAdditionalSaveData(CompoundTag nbt) {
          super.addAdditionalSaveData(nbt);
-         nbt.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
+         NbtUtils.addCurrentDataVersion(nbt);
 -        nbt.put("Inventory", this.inventory.save(new ListTag()));
 -        nbt.putInt("SelectedItemSlot", this.inventory.selected);
 +        nbt.put("Inventory", this.getNormalInventory().save(new ListTag())); // Nabulus
@@ -197,10 +196,10 @@ index 61597ebe2f9faff43994c475074b87d11905e582..f53cc9d7eef395d570086709bbd4eb65
          nbt.putFloat("XpP", this.experienceProgress);
          nbt.putInt("XpLevel", this.experienceLevel);
 diff --git a/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java b/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
-index 5049e969e06f4cc1826378249548064042c28410..1bd29d76ed76e5c83b4894694239d2a2e41f17a0 100644
+index f212a78d9d32e9b59f16f03e07d2dd4789ad8080..2e9488f616872bd06c9404e2d9d0d47efedda256 100644
 --- a/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/src/main/java/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -253,6 +253,7 @@ public class LevelStorageSource {
+@@ -252,6 +252,7 @@ public class LevelStorageSource {
              Lifecycle lifecycle1 = worlddimensions_b.lifecycle().add(lifecycle);
              PrimaryLevelData worlddataserver = PrimaryLevelData.parse(dynamic, datafixer, i, nbttagcompound2, worldsettings, levelversion, worlddimensions_b.specialWorldProperty(), generatorsettings.options(), lifecycle1);
              worlddataserver.pdc = nbttagcompound1.get("BukkitValues"); // CraftBukkit - Add PDC to world
@@ -209,7 +208,7 @@ index 5049e969e06f4cc1826378249548064042c28410..1bd29d76ed76e5c83b4894694239d2a2
              return Pair.of(worlddataserver, worlddimensions_b);
          };
 diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
-index b6218626bad7f8ddfba91b216ac1e10647f04df5..458d03af1553210e67cfc8e74d3a0a219a1e34fb 100644
+index 936b7f464097c30fe4dfbe4cee1c1490df8c3a58..3c2ee591c1e3d39219369233292b624c8d4bd227 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 @@ -98,6 +98,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
