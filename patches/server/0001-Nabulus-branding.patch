@@ -5,34 +5,28 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9cf389defdaeb887e9cad4f0fed3f3b95667b238..7dc7cf4b2ebef95a10941cd1278acce5946ca546 100644
+index 3c8293f002f11b430083502362fdc801f44aa138..d150d58adf5f01000af510029188d480e949aae0 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -7,8 +7,12 @@ plugins {
+@@ -7,7 +7,7 @@ plugins {
  }
  
  dependencies {
--    implementation(project(":paper-api"))
--    implementation(project(":paper-mojangapi"))
-+    // Nabulus start
-+    implementation(project(":nabulus-api"))
-+    implementation("io.papermc.paper:paper-mojangapi:1.19.4-R0.1-SNAPSHOT") {
-+        exclude("io.papermc.paper", "paper-api")
-+    }
-+    // Nabulus end
-     // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-     implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -62,7 +66,7 @@ tasks.jar {
+-    implementation(project(":pufferfish-api")) // Pufferfish // Paper
++    implementation(project(":nabulus-api")) // Nabulus // Pufferfish // Paper
+     // Pufferfish start
+     implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
+         exclude("io.papermc.paper", "paper-api")
+@@ -82,7 +82,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-Paper-$implementationVersion",
-+            "Implementation-Version" to "git-Nabulus-$implementationVersion", // Nabulus
+-            "Implementation-Version" to "git-Pufferfish-$implementationVersion", // Pufferfish
++            "Implementation-Version" to "git-Nabulus-$implementationVersion", // Pufferfish // Nabulus
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
-@@ -134,7 +138,7 @@ fun TaskContainer.registerRunTask(
+@@ -154,7 +154,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
@@ -42,41 +36,41 @@ index 9cf389defdaeb887e9cad4f0fed3f3b95667b238..7dc7cf4b2ebef95a10941cd1278acce5
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9f15d9dbdfa74a0640b1a2b4ff695609d4758a4c..da420d8fc23414b1963e98a0c9d0794df99c6353 100644
+index a29d92b3f2658b63545b25092bb3a1fea46ca36b..15965ad400164f589cc9be4423779a7024cac27e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1682,7 +1682,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1684,7 +1684,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Paper"; // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return "Nabulus"; // Nabulus - Nabulus > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return "Pufferfish"; // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "Nabulus"; // Nabulus - Nabulus > // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 4cd95134811fd65465681d159b2f30cf77455830..853721ef7de86bb1d8d12d58e5f949dc7d8b96d1 100644
+index 482420c38e8fd1abc261daeabce76091f1e0ff3c..f805fee3b02cd000f38e546c53361b4657a64565 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -256,7 +256,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
--    private final String serverName = "Paper"; // Paper
-+    private final String serverName = "Nabulus"; // Nabulus // Paper
+-    private final String serverName = "Pufferfish"; // Paper // Pufferfish
++    private final String serverName = "Nabulus"; // Paper // Pufferfish // Nabulus
      private final String serverVersion;
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index 774556a62eb240da42e84db4502e2ed43495be17..df1fe60f2f26b1dae0a724cb55a2337d75c7d7a4 100644
+index 80553face9c70c2a3d897681e7761df85b22d464..7f3c029e5dbc3cbb762e3b0b109e51a5cbc7f5db 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
      public static String getBukkitVersion() {
          String result = "Unknown-Version";
  
--        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/io.papermc.paper/paper-api/pom.properties");
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.froobworld.nabulus/nabulus-api/pom.properties"); // Nabulus
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/gg.pufferfish.pufferfish/pufferfish-api/pom.properties"); // Pufferfish
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.froobworld.nabulus/nabulus-api/pom.properties"); // Pufferfish // Nabulus
          Properties properties = new Properties();
  
          if (stream != null) {

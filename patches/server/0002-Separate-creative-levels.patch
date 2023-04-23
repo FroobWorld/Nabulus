@@ -55,10 +55,10 @@ index 1d4d02f26391ac55c7631817f09d05e2769b0d29..bff57e2183484c0aa6ac0b9a38a7b8ac
          this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
          this.setLastDeathLocation(oldPlayer.getLastDeathLocation());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index a1096ea424c0724af93a2dc65512ee71f4a0bf72..a88a007c7bef417e8aca6b8bbbe3cacad719f66c 100644
+index 4d837c1530a3031a4c2a5a39d87bd013d60e14a6..3908bfd0c652a25c54eeaf27f97206d5f96b4669 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -811,8 +811,15 @@ public abstract class PlayerList {
+@@ -812,8 +812,15 @@ public abstract class PlayerList {
          entityplayer.wonGame = false;
          // CraftBukkit end
  
@@ -76,10 +76,10 @@ index a1096ea424c0724af93a2dc65512ee71f4a0bf72..a88a007c7bef417e8aca6b8bbbe3caca
          entityplayer1.setMainArm(entityplayer.getMainArm());
          Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4705d7066207250c03a5f98eef61554c901f2e35..ae644487476eef427d90c566d60485e66850a03d 100644
+index e25be74ef0a88541884ad62a4b84219400d5a142..6070c9e32c2bcd49caf45e4c8707111722676e12 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -2424,6 +2424,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2458,6 +2458,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  // Paper end - Move player to spawn point if spawn in unloaded world
  
                  ((ServerPlayer) this).setLevel(bworld == null ? null : ((CraftWorld) bworld).getHandle());
@@ -87,7 +87,7 @@ index 4705d7066207250c03a5f98eef61554c901f2e35..ae644487476eef427d90c566d60485e6
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
-@@ -3396,6 +3397,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3430,6 +3431,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level instanceof ServerLevel && !this.isRemoved()) {
@@ -99,7 +99,7 @@ index 4705d7066207250c03a5f98eef61554c901f2e35..ae644487476eef427d90c566d60485e6
              this.level.getProfiler().push("changeDimension");
              // CraftBukkit start
              // this.decouple();
-@@ -3481,6 +3487,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3515,6 +3521,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          if (destination == null) {
              return null;
          }
