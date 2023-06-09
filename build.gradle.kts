@@ -16,8 +16,8 @@ repositories {
 
 dependencies {
     remapper("net.fabricmc:tiny-remapper:0.8.6:fat")
-    decompiler("net.minecraftforge:forgeflower:2.0.605.1")
-    paperclip("io.papermc:paperclip:3.0.2")
+    decompiler("net.minecraftforge:forgeflower:2.0.627.2")
+    paperclip("io.papermc:paperclip:3.0.3")
 }
 
 allprojects {
@@ -61,14 +61,8 @@ paperweight {
     remapRepo.set("https://maven.fabricmc.net/")
     decompileRepo.set("https://files.minecraftforge.net/maven/")
 
-    useStandardUpstream("pufferfish") {
-        url.set(github("pufferfish-gg", "Pufferfish"))
-        ref.set(providers.gradleProperty("paperRef"))
-
-        withStandardPatcher {
-            apiSourceDirPath.set("pufferfish-api")
-            serverSourceDirPath.set("pufferfish-server")
-
+    usePaperUpstream(providers.gradleProperty("paperRef")) {
+        withPaperPatcher {
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
 
