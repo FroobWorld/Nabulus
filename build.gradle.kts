@@ -61,8 +61,14 @@ paperweight {
     remapRepo.set("https://maven.fabricmc.net/")
     decompileRepo.set("https://files.minecraftforge.net/maven/")
 
-    usePaperUpstream(providers.gradleProperty("paperRef")) {
-        withPaperPatcher {
+    useStandardUpstream("pufferfish") {
+        url.set(github("pufferfish-gg", "Pufferfish"))
+        ref.set(providers.gradleProperty("paperRef"))
+
+        withStandardPatcher {
+            apiSourceDirPath.set("pufferfish-api")
+            serverSourceDirPath.set("pufferfish-server")
+
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
 

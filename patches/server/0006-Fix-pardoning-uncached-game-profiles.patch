@@ -5,11 +5,11 @@ Subject: [PATCH] Fix pardoning uncached game profiles
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
-index 6e2047f1b45799c7a1ddfdcd24d76e6e12f91e4b..24d394d41725566abe35c474e9bfdae0543b5050 100644
+index 535a571d140dd5932dbd503c540f988c421f0627..6b4cddda38a0828b2677bb5afe37b6c8ae0dc8b5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
 @@ -92,6 +92,19 @@ public class CraftProfileBanList implements org.bukkit.BanList {
-         Validate.notNull(target, "Target cannot be null");
+         Preconditions.checkArgument(target != null, "Target cannot be null");
  
          GameProfile profile = this.getProfile(target);
 +        // Nabulus start
