@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sat, 12 Aug 2023 16:19:59 +0930
+Subject: [PATCH] Throttle spawn attempts after consistent failures
+
+
+diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+index 5d19ef5231752c6cccc73b9adfb67e53e87baf7a..6b8eaa35437abfcf10e23dbf08394d57d2a9daca 100644
+--- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
++++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+@@ -146,7 +146,8 @@ public final class NaturalSpawner {
+             int limit = enumcreaturetype.getMaxInstancesPerChunk();
+             SpawnCategory spawnCategory = CraftSpawnCategory.toBukkit(enumcreaturetype);
+             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+-                spawnThisTick = world.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % world.ticksPerSpawnCategory.getLong(spawnCategory) == 0;
++                int spawnRateMultiplier = chunk.failedSpawnAttempts.getOrDefault(enumcreaturetype, 0) > 1200 ? 10 : 1; // Nabulus
++                spawnThisTick = world.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % (world.ticksPerSpawnCategory.getLong(spawnCategory) * spawnRateMultiplier) == 0; // Nabulus
+                 limit = world.getWorld().getSpawnLimit(spawnCategory);
+             }
+ 
+@@ -185,6 +186,13 @@ public final class NaturalSpawner {
+                     difference, world.paperConfig().entities.spawning.perPlayerMobSpawns ? world.getChunkSource().chunkMap::updatePlayerMobTypeMap : null);
+                 info.mobCategoryCounts.mergeInt(enumcreaturetype, spawnCount, Integer::sum);
+                 // Paper end
++                // Nabulus start
++                if (spawnCount == 0) {
++                    chunk.failedSpawnAttempts.compute(enumcreaturetype, (k, v) -> (v == null ? 0 : v) + 1);
++                } else {
++                    chunk.failedSpawnAttempts.put(enumcreaturetype, 0);
++                }
++                // Nabulus end
+             }
+         }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+index 3eeb1f0eac76efe9b7c24f6d5787018c7842d07a..cc856575038597f39b0284d5c790f13e7616b3a1 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
++++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -84,6 +84,7 @@ public class LevelChunk extends ChunkAccess {
+     private final Int2ObjectMap<GameEventListenerRegistry> gameEventListenerRegistrySections;
+     private final LevelChunkTicks<Block> blockTicks;
+     private final LevelChunkTicks<Fluid> fluidTicks;
++    public final Map<net.minecraft.world.entity.MobCategory, Integer> failedSpawnAttempts = new java.util.EnumMap<>(net.minecraft.world.entity.MobCategory.class); // Nabulus
+ 
+     // Pufferfish start - instead of using a random every time the chunk is ticked, define when lightning strikes preemptively
+     private int lightningTick;
