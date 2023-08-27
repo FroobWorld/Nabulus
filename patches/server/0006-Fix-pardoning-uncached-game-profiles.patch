@@ -4,16 +4,16 @@ Date: Sun, 12 Feb 2023 10:10:22 +0930
 Subject: [PATCH] Fix pardoning uncached game profiles
 
 
-diff --git a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
-index 535a571d140dd5932dbd503c540f988c421f0627..6b4cddda38a0828b2677bb5afe37b6c8ae0dc8b5 100644
---- a/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
-+++ b/src/main/java/org/bukkit/craftbukkit/CraftProfileBanList.java
-@@ -92,6 +92,19 @@ public class CraftProfileBanList implements org.bukkit.BanList {
+diff --git a/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
+index 50ee7656580d386db473c054f5c5ec57bb2b1424..dcbc391538fcbbb735cd0b082d550f25f82e3573 100644
+--- a/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
++++ b/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
+@@ -159,6 +159,19 @@ public class CraftProfileBanList implements ProfileBanList {
+     public void pardon(String target) {
          Preconditions.checkArgument(target != null, "Target cannot be null");
  
-         GameProfile profile = this.getProfile(target);
 +        // Nabulus start
-+        if (profile == null) {
++        if (CraftProfileBanList.getProfile(target) == null) {
 +            java.util.List<GameProfile> toPardon = new java.util.ArrayList<>();
 +            for (UserBanListEntry banListEntry : list.getEntries()) {
 +                if (banListEntry == null || banListEntry.getUser() == null || banListEntry.getUser().getId() == null) continue;
@@ -25,6 +25,6 @@ index 535a571d140dd5932dbd503c540f988c421f0627..6b4cddda38a0828b2677bb5afe37b6c8
 +            return;
 +        }
 +        // Nabulus end
-         this.list.remove(profile);
+         this.pardon(CraftProfileBanList.getProfile(target));
      }
  
