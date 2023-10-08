@@ -5,7 +5,7 @@ Subject: [PATCH] Throttle spawn attempts after consistent failures
 
 
 diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
-index 5d19ef5231752c6cccc73b9adfb67e53e87baf7a..6b8eaa35437abfcf10e23dbf08394d57d2a9daca 100644
+index 3cdddda9c0618e95288b81b975d499c8dd30c05f..db78a22594b5bce7ffde3b8ed6df13937387ad10 100644
 --- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 @@ -146,7 +146,8 @@ public final class NaturalSpawner {
@@ -18,7 +18,7 @@ index 5d19ef5231752c6cccc73b9adfb67e53e87baf7a..6b8eaa35437abfcf10e23dbf08394d57
                  limit = world.getWorld().getSpawnLimit(spawnCategory);
              }
  
-@@ -185,6 +186,13 @@ public final class NaturalSpawner {
+@@ -183,6 +184,13 @@ public final class NaturalSpawner {
                      difference, world.paperConfig().entities.spawning.perPlayerMobSpawns ? world.getChunkSource().chunkMap::updatePlayerMobTypeMap : null);
                  info.mobCategoryCounts.mergeInt(enumcreaturetype, spawnCount, Integer::sum);
                  // Paper end
@@ -33,14 +33,14 @@ index 5d19ef5231752c6cccc73b9adfb67e53e87baf7a..6b8eaa35437abfcf10e23dbf08394d57
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 3eeb1f0eac76efe9b7c24f6d5787018c7842d07a..cc856575038597f39b0284d5c790f13e7616b3a1 100644
+index 4abec88caab4116cfa318f7b66c6b1a8346a7401..943e7a06b456d4edd2b253093baff4e72c089d75 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -84,6 +84,7 @@ public class LevelChunk extends ChunkAccess {
-     private final Int2ObjectMap<GameEventListenerRegistry> gameEventListenerRegistrySections;
+@@ -85,6 +85,7 @@ public class LevelChunk extends ChunkAccess {
      private final LevelChunkTicks<Block> blockTicks;
      private final LevelChunkTicks<Fluid> fluidTicks;
+     public volatile FullChunkStatus chunkStatus = FullChunkStatus.INACCESSIBLE; // Paper - rewrite chunk system
 +    public final Map<net.minecraft.world.entity.MobCategory, Integer> failedSpawnAttempts = new java.util.EnumMap<>(net.minecraft.world.entity.MobCategory.class); // Nabulus
  
-     // Pufferfish start - instead of using a random every time the chunk is ticked, define when lightning strikes preemptively
-     private int lightningTick;
+     public LevelChunk(Level world, ChunkPos pos) {
+         this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null);

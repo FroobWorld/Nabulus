@@ -5,10 +5,10 @@ Subject: [PATCH] Add silent chest flag to players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index a1132d025a241aeb263e0e3d602d91661e05a729..06fe26afa54fc632a95c66a79d48bac862930c30 100644
+index 421de38e1c334ece3e258a97202daaff8128cbb2..c1dd9b27b5b5cc3fba33bdef4b7dc857d1b87213 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -193,6 +193,7 @@ public abstract class Player extends LivingEntity {
+@@ -194,6 +194,7 @@ public abstract class Player extends LivingEntity {
      public int oldLevel = -1;
  
      // Nabulus start
@@ -46,10 +46,10 @@ index 3e4b3eecc788c564f81b7929bfab7d2fdb6e307d..0551d365e1bbf1fbc90e4a53a77246cd
  
      public void recheckOpeners(Level world, BlockPos pos, BlockState state) {
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-index b7686fd63b7c5d88c3a12ec4ee9bc01a17f997e0..d678c5ed2a9453b1f9e821e3308b642d41482a3d 100644
+index 1fa22445a4ecc8c08dbcf0cc6bd39dc5003604c4..d31fb10742f6570c248e80467495f796f8aefa5c 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -191,7 +191,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -201,7 +201,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void startOpen(Player player) {
@@ -58,7 +58,7 @@ index b7686fd63b7c5d88c3a12ec4ee9bc01a17f997e0..d678c5ed2a9453b1f9e821e3308b642d
              if (this.openCount < 0) {
                  this.openCount = 0;
              }
-@@ -209,7 +209,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -219,7 +219,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void stopOpen(Player player) {
