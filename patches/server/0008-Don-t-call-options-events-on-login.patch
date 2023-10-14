@@ -5,7 +5,7 @@ Subject: [PATCH] Don't call options events on login
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 50eec2fb3eea4f433d4801cd805b140f55a29388..87122472e8836cc1a71aa3f5fb6f1bd8c569d4ce 100644
+index 50eec2fb3eea4f433d4801cd805b140f55a29388..b499bd418ff6ee03c60bb64dd1791453b4ebc0f7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -412,7 +412,7 @@ public class ServerPlayer extends Player {
@@ -17,11 +17,12 @@ index 50eec2fb3eea4f433d4801cd805b140f55a29388..87122472e8836cc1a71aa3f5fb6f1bd8
  
          this.cachedSingleHashSet = new com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(this); // Paper
  
-@@ -2062,6 +2062,10 @@ public class ServerPlayer extends Player {
+@@ -2062,6 +2062,11 @@ public class ServerPlayer extends Player {
              this.server.server.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerLocaleChangeEvent(this.getBukkitEntity(), this.language, clientOptions.language())); // Paper
          }
          // CraftBukkit end
 +        // Nabulus start
++        updateOptionsNoEvents(clientOptions);
 +    }
 +    public void updateOptionsNoEvents(ClientInformation clientOptions) {
 +        // Nabulus end
