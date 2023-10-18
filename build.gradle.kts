@@ -61,7 +61,7 @@ paperweight {
     remapRepo.set("https://maven.fabricmc.net/")
     decompileRepo.set("https://files.minecraftforge.net/maven/")
 
-    usePaperUpstream(providers.gradleProperty("paperRef")) {
+/*    usePaperUpstream(providers.gradleProperty("paperRef")) {
         withPaperPatcher {
             apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
@@ -69,8 +69,8 @@ paperweight {
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("nabulus-server"))
         }
-    }
-/*    useStandardUpstream("pufferfish") {
+    }*/
+    useStandardUpstream("pufferfish") {
         url.set(github("pufferfish-gg", "Pufferfish"))
         ref.set(providers.gradleProperty("paperRef"))
 
@@ -84,7 +84,7 @@ paperweight {
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("nabulus-server"))
         }
-    }*/
+    }
 }
 
 //

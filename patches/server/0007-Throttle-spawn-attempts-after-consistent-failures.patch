@@ -5,7 +5,7 @@ Subject: [PATCH] Throttle spawn attempts after consistent failures
 
 
 diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
-index 3cdddda9c0618e95288b81b975d499c8dd30c05f..db78a22594b5bce7ffde3b8ed6df13937387ad10 100644
+index 9c2d62feff1816f5729060c6192269a5b2d34153..775aa53eaa84b53a46e58a3ce3cd057eec3fb805 100644
 --- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 @@ -146,7 +146,8 @@ public final class NaturalSpawner {
@@ -33,7 +33,7 @@ index 3cdddda9c0618e95288b81b975d499c8dd30c05f..db78a22594b5bce7ffde3b8ed6df1393
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 4abec88caab4116cfa318f7b66c6b1a8346a7401..943e7a06b456d4edd2b253093baff4e72c089d75 100644
+index 7edc6f1e642d01299117680edc79c67225c2053c..41c12c4cf743a86fc8d548f95c3eeba3584a02d6 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -85,6 +85,7 @@ public class LevelChunk extends ChunkAccess {
@@ -42,5 +42,5 @@ index 4abec88caab4116cfa318f7b66c6b1a8346a7401..943e7a06b456d4edd2b253093baff4e7
      public volatile FullChunkStatus chunkStatus = FullChunkStatus.INACCESSIBLE; // Paper - rewrite chunk system
 +    public final Map<net.minecraft.world.entity.MobCategory, Integer> failedSpawnAttempts = new java.util.EnumMap<>(net.minecraft.world.entity.MobCategory.class); // Nabulus
  
-     public LevelChunk(Level world, ChunkPos pos) {
-         this(world, pos, UpgradeData.EMPTY, new LevelChunkTicks<>(), new LevelChunkTicks<>(), 0L, (LevelChunkSection[]) null, (LevelChunk.PostLoadProcessor) null, (BlendingData) null);
+     // Pufferfish start - instead of using a random every time the chunk is ticked, define when lightning strikes preemptively
+     private int lightningTick;
