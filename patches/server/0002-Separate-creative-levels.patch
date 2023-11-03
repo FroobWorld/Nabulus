@@ -5,7 +5,7 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index ba972d1661426d7e30f6f61bad3b9608e66ea721..478d4104c96f6cc793d5323d9c034e28df66913c 100644
+index f71a4a8307fb092d33545e12d253e0b80c884168..9e8631576009427cdb9defef80730534287f96aa 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -649,6 +649,7 @@ public class ServerPlayer extends Player {
@@ -54,7 +54,7 @@ index ba972d1661426d7e30f6f61bad3b9608e66ea721..478d4104c96f6cc793d5323d9c034e28
          this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
          this.setLastDeathLocation(oldPlayer.getLastDeathLocation());
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 48d1444fbad1c57738807d0128b94160a5a17a4d..e7d298e9b59c2b54caf7b323903103b2c7a3ef18 100644
+index 30dd56871acff2dd730d96406520bab066229d7a..0dbcbe7876bc7101105eaf4643615d691c93cec5 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -825,8 +825,15 @@ public abstract class PlayerList {
@@ -75,10 +75,10 @@ index 48d1444fbad1c57738807d0128b94160a5a17a4d..e7d298e9b59c2b54caf7b323903103b2
          entityplayer1.setMainArm(entityplayer.getMainArm());
          Iterator iterator = entityplayer.getTags().iterator();
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 505ed0f8f933428192f5fc806ff52d84acea7f99..d3c6c8c35299adbb690bb944d6ccb45e2ef67685 100644
+index 0d364a6fdcc00fbb1e9a013149f8c40a711613c7..2a14a90ade4044031a521a8b6dd18c2e3c650ec6 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -2554,6 +2554,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2587,6 +2587,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  // Paper end - Move player to spawn point if spawn in unloaded world
  
                  ((ServerPlayer) this).setLevel(bworld == null ? null : ((CraftWorld) bworld).getHandle());
@@ -86,7 +86,7 @@ index 505ed0f8f933428192f5fc806ff52d84acea7f99..d3c6c8c35299adbb690bb944d6ccb45e
              }
              this.getBukkitEntity().readBukkitValues(nbt);
              if (nbt.contains("Bukkit.invisible")) {
-@@ -3581,6 +3582,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3614,6 +3615,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          }
          // Paper end
          if (this.level() instanceof ServerLevel && !this.isRemoved()) {
@@ -98,7 +98,7 @@ index 505ed0f8f933428192f5fc806ff52d84acea7f99..d3c6c8c35299adbb690bb944d6ccb45e
              this.level().getProfiler().push("changeDimension");
              // CraftBukkit start
              // this.unRide();
-@@ -3671,6 +3677,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -3704,6 +3710,11 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
          if (destination == null) {
              return null;
          }
@@ -111,7 +111,7 @@ index 505ed0f8f933428192f5fc806ff52d84acea7f99..d3c6c8c35299adbb690bb944d6ccb45e
          boolean flag1 = destination.getTypeKey() == LevelStem.END; // targetIsEnd
          // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index d58b4c0dbe651b5068212e5f14dce3164ee520f5..421de38e1c334ece3e258a97202daaff8128cbb2 100644
+index 481c3e321cfc0f20bb1c4c6942b8bdbd23c06339..1eafb27263bdbb4a91df7d46247e3ff64ee503cf 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -193,6 +193,40 @@ public abstract class Player extends LivingEntity {
@@ -207,7 +207,7 @@ index 4bcecf2aaab3aed5daa96e1897fb105f013c82cc..e717805e46364d44f095508e09b5f251
              return Pair.of(worlddataserver, worlddimensions_b);
          };
 diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
-index 7bfc5bbfcf67e5bbf57e99e648ff5bed4d6b477f..f6725bd0398eea206f67e52b88bb350b685f291a 100644
+index 6357ac8640fdf9f47a94ad69e77a67f60ddf101f..439cc1188e60819daf83129fc479d856f9f6ef00 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
 @@ -101,6 +101,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
