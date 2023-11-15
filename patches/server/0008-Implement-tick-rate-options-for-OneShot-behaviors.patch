@@ -1,0 +1,110 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Wed, 15 Nov 2023 17:15:10 +0930
+Subject: [PATCH] Implement tick rate options for OneShot behaviors
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java b/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
+index 57ef7fbba3028c28231abf7b7ae78aa019323536..30aed0b871fc3544d37fb307a6b08b364172c876 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
+@@ -16,6 +16,16 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
+     // Paper start - configurable behavior tick rate and timings
+     private final String configKey;
+     private final co.aikar.timings.Timing timing;
++    // Nabulus start
++    public static String getConfigKey(String behaviorClass) {
++        String key = io.papermc.paper.util.ObfHelper.INSTANCE.deobfClassName(behaviorClass);
++        int lastSeparator = key.lastIndexOf('.');
++        if (lastSeparator != -1) {
++            key = key.substring(lastSeparator + 1);
++        }
++        return key.toLowerCase(java.util.Locale.ROOT);
++    }
++    // Nabulus end
+     // Paper end
+ 
+     public Behavior(Map<MemoryModuleType<?>, MemoryStatus> requiredMemoryState) {
+@@ -31,12 +41,7 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
+         this.maxDuration = maxRunTime;
+         this.entryCondition = requiredMemoryState;
+         // Paper start - configurable behavior tick rate and timings
+-        String key = io.papermc.paper.util.ObfHelper.INSTANCE.deobfClassName(this.getClass().getName());
+-        int lastSeparator = key.lastIndexOf('.');
+-        if (lastSeparator != -1) {
+-            key = key.substring(lastSeparator + 1);
+-        }
+-        this.configKey = key.toLowerCase(java.util.Locale.ROOT);
++        this.configKey = getConfigKey(this.getClass().getName()); // Nabulus
+         this.timing = co.aikar.timings.MinecraftTimings.getBehaviorTimings(configKey);
+         // Paper end
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java b/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java
+index dde5c53550ddbdfc8288f725468924b35ea5b05e..ca2d3a0f67a2f07ec33394d1aa3f2ca2f29af404 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java
+@@ -6,6 +6,20 @@ import net.minecraft.world.entity.ai.behavior.declarative.Trigger;
+ 
+ public abstract class OneShot<E extends LivingEntity> implements BehaviorControl<E>, Trigger<E> {
+     private Behavior.Status status = Behavior.Status.STOPPED;
++    // Nabulus start - configurable behavior tick rate and timings
++    private final String configKey;
++    private final co.aikar.timings.Timing timing;
++    private long lastRun;
++
++    public OneShot() {
++        this("unknown");
++    }
++
++    public OneShot(String configKey) {
++        this.configKey = configKey;
++        this.timing = co.aikar.timings.MinecraftTimings.getBehaviorTimings(configKey);
++    }
++    // Nabulus end
+ 
+     @Override
+     public final Behavior.Status getStatus() {
+@@ -14,10 +28,22 @@ public abstract class OneShot<E extends LivingEntity> implements BehaviorControl
+ 
+     @Override
+     public final boolean tryStart(ServerLevel world, E entity, long time) {
++        // Nabulus start - behavior tick rate and timings
++        int tickRate = java.util.Objects.requireNonNullElse(world.paperConfig().tickRates.behavior.get(entity.getType(), this.configKey), -1);
++        if (tickRate > -1 && time < this.lastRun + tickRate) {
++            return false;
++        }
++        this.timing.startTiming();
++        // Nabulus end
+         if (this.trigger(world, entity, time)) {
+             this.status = Behavior.Status.RUNNING;
++            // Nabulus start - behavior tick rate and timings
++            this.lastRun = time;
++            this.timing.stopTiming();
++            // Nabulus end
+             return true;
+         } else {
++            this.timing.stopTiming(); // Nabulus - behavior timings
+             return false;
+         }
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java b/src/main/java/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
+index 6f323026b2d6fb5151e8b9dd9466e96eb026ccbd..de1ca4785a06eabf3343bee6f337982898f0e21c 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
+@@ -35,7 +35,15 @@ public class BehaviorBuilder<E extends LivingEntity, M> implements App<BehaviorB
+ 
+     public static <E extends LivingEntity> OneShot<E> create(Function<BehaviorBuilder.Instance<E>, ? extends App<BehaviorBuilder.Mu<E>, Trigger<E>>> creator) {
+         final BehaviorBuilder.TriggerWithResult<E, Trigger<E>> triggerWithResult = get(creator.apply(instance()));
+-        return new OneShot<E>() {
++        // Nabulus start - configurable tick rates
++        java.lang.StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
++        String callingClass = null;
++        if (stackTraceElements.length > 2) {
++            callingClass = stackTraceElements[2].getClassName();
++        }
++        final String configKey = callingClass == null ? "unknown" : net.minecraft.world.entity.ai.behavior.Behavior.getConfigKey(callingClass);
++        // Nabulus end
++        return new OneShot<E>(configKey) { // Nabulus
+             @Override
+             public boolean trigger(ServerLevel world, E entity, long time) {
+                 Trigger<E> trigger = triggerWithResult.tryTrigger(world, entity, time);
