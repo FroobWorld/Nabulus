@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sat, 16 Dec 2023 15:18:46 +0930
+Subject: [PATCH] Don't show smoke for silent fireworks
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+index b2f08889139dc447f7071f1c81456035bf8de31e..9ec76601cb101d46720fd9156f766598367b5b5a 100644
+--- a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
++++ b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+@@ -171,7 +171,7 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
+         }
+ 
+         ++this.life;
+-        if (this.level().isClientSide && this.life % 2 < 2) {
++        if (this.level().isClientSide && this.life % 2 < 2 && !this.isSilent()) { // Nabulus - don't show firework smoke for silent fireworks
+             this.level().addParticle(ParticleTypes.FIREWORK, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
+         }
+ 
