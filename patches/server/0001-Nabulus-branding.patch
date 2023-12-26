@@ -5,7 +5,7 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 77f76653c22c44ac9ab7f396b686affc228502c9..df5ba9d74b972d6bd301663422da410cce2c27e3 100644
+index fc69eb68a732ede332b2e80bda8af9033aa6ec02..5808aabe51dcc48c69138889235136ad746f4500 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -27,10 +27,10 @@ index 77f76653c22c44ac9ab7f396b686affc228502c9..df5ba9d74b972d6bd301663422da410c
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 371049c1236c6443384c0ce184e99d5b9f8e57c2..67144d4d3b6b453cfb874b86c14c8d362eaee1c6 100644
+index 53d0a930ae5ec34c1f3a58e96e92f54dd9c7881c..1bbcf2649b71ddabaa0b4f3e9d523180ea837d85 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1699,7 +1699,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1868,7 +1868,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -40,10 +40,10 @@ index 371049c1236c6443384c0ce184e99d5b9f8e57c2..67144d4d3b6b453cfb874b86c14c8d36
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 5a95dcc02241d6036ee520a6a7a05e8713c6081f..84735f672956282dbc8365bc32efc644706db3d8 100644
+index 6550d4ea03b5b56159b19e297f03b0b141c59c62..2e8cada3f742174ea73a435c595b81c8ec069eee 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -267,7 +267,7 @@ import javax.annotation.Nullable; // Paper
+@@ -264,7 +264,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
