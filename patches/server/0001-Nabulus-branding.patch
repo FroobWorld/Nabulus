@@ -5,7 +5,7 @@ Subject: [PATCH] Nabulus branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index fc69eb68a732ede332b2e80bda8af9033aa6ec02..5808aabe51dcc48c69138889235136ad746f4500 100644
+index 0dab873b52e718ffb83c655b6467abe53c8fdb1d..3d682f71ff774cef605362837e2c615950300f57 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -27,23 +27,23 @@ index fc69eb68a732ede332b2e80bda8af9033aa6ec02..5808aabe51dcc48c69138889235136ad
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 32f2c4bc66c4c891cf854d96b901b0f3046b34e9..df6d1d1a71c1cb362075a7b3e56be256c6d91941 100644
+index d1c21d36de331905aedb08b0a8d4fbf97e100a13..76396c3b3ea756f344cf5cdb3cbd8392cc0b029e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1874,7 +1874,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1862,7 +1862,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return "Pufferfish"; // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return "Nabulus"; // Nabulus - Nabulus > // Pufferfish - Pufferfish > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return "Pufferfish"; // Pufferfish > // Paper
++        return "Pufferfish"; // Nabulus > // Pufferfish > // Paper
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 36c68a6e2bc49b5192fb4d27f174b520e59430c6..0f8bd3aab46b2f0c77c26f747d915b4390a622cc 100644
+index 9f5a6398a7dca841570a895054cee969dc96bca4..5b7d11206320fb99cb4924cacb18b5210bc28dc6 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -264,7 +264,7 @@ import javax.annotation.Nullable; // Paper
+@@ -266,7 +266,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {

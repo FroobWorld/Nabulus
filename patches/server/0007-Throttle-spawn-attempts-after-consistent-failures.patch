@@ -5,15 +5,17 @@ Subject: [PATCH] Throttle spawn attempts after consistent failures
 
 
 diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
-index 9c2d62feff1816f5729060c6192269a5b2d34153..775aa53eaa84b53a46e58a3ce3cd057eec3fb805 100644
+index 661acdf4b1f33d150b0caf179e925d3162d7be35..1819e2fbbd3c384e461e147d3097ff324bdd0cb6 100644
 --- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
-@@ -146,7 +146,8 @@ public final class NaturalSpawner {
+@@ -144,9 +144,10 @@ public final class NaturalSpawner {
+             // CraftBukkit start - Use per-world spawn limits
+             boolean spawnThisTick = true;
              int limit = enumcreaturetype.getMaxInstancesPerChunk();
++            int spawnRateMultiplier = chunk.failedSpawnAttempts.getOrDefault(enumcreaturetype, 0) > 1200 ? 10 : 1; // Nabulus
              SpawnCategory spawnCategory = CraftSpawnCategory.toBukkit(enumcreaturetype);
              if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 -                spawnThisTick = world.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % world.ticksPerSpawnCategory.getLong(spawnCategory) == 0;
-+                int spawnRateMultiplier = chunk.failedSpawnAttempts.getOrDefault(enumcreaturetype, 0) > 1200 ? 10 : 1; // Nabulus
 +                spawnThisTick = world.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % (world.ticksPerSpawnCategory.getLong(spawnCategory) * spawnRateMultiplier) == 0; // Nabulus
                  limit = world.getWorld().getSpawnLimit(spawnCategory);
              }
@@ -21,7 +23,7 @@ index 9c2d62feff1816f5729060c6192269a5b2d34153..775aa53eaa84b53a46e58a3ce3cd057e
 @@ -183,6 +184,13 @@ public final class NaturalSpawner {
                      difference, world.paperConfig().entities.spawning.perPlayerMobSpawns ? world.getChunkSource().chunkMap::updatePlayerMobTypeMap : null);
                  info.mobCategoryCounts.mergeInt(enumcreaturetype, spawnCount, Integer::sum);
-                 // Paper end
+                 // Paper end - Optional per player mob spawns
 +                // Nabulus start
 +                if (spawnCount == 0) {
 +                    chunk.failedSpawnAttempts.compute(enumcreaturetype, (k, v) -> (v == null ? 0 : v) + 1);
@@ -33,7 +35,7 @@ index 9c2d62feff1816f5729060c6192269a5b2d34153..775aa53eaa84b53a46e58a3ce3cd057e
          }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 7edc6f1e642d01299117680edc79c67225c2053c..41c12c4cf743a86fc8d548f95c3eeba3584a02d6 100644
+index 922191159fadf8e89646d7299aadee4aa851f71a..c78aae30d7b701aa0e520618166870647988ccf3 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -85,6 +85,7 @@ public class LevelChunk extends ChunkAccess {

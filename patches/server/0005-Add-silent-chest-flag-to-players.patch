@@ -5,10 +5,10 @@ Subject: [PATCH] Add silent chest flag to players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 588bbfdff190480194179213debf93de0bbabb7d..442f4da2a40804332289f61673fd18d6b5ca7eb8 100644
+index f7b88c3215635e60d1448bb6cf57410148bd088e..df163093bdc3c7da9cd8ba2159b06b051bc99302 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -189,6 +189,7 @@ public abstract class Player extends LivingEntity {
+@@ -188,6 +188,7 @@ public abstract class Player extends LivingEntity {
      public int oldLevel = -1;
  
      // Nabulus start
@@ -17,7 +17,7 @@ index 588bbfdff190480194179213debf93de0bbabb7d..442f4da2a40804332289f61673fd18d6
      protected final Inventory creativeLevelInventory = new Inventory(this);
      private boolean inventoriesLoaded = false;
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-index 3e4b3eecc788c564f81b7929bfab7d2fdb6e307d..0551d365e1bbf1fbc90e4a53a77246cd9d902199 100644
+index 7eccacb978f047a4774e58b11bc3f9ab3959b049..debc7165ea0af4ef4cb983e07c0a9f20c83696f8 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 @@ -40,6 +40,7 @@ public abstract class ContainerOpenersCounter {
@@ -34,7 +34,7 @@ index 3e4b3eecc788c564f81b7929bfab7d2fdb6e307d..0551d365e1bbf1fbc90e4a53a77246cd
      public void decrementOpeners(Player player, Level world, BlockPos pos, BlockState state) {
 +        if (player.silentChests) return; // Nabulus
          int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
-         if (this.openCount == 0) return; // Paper
+         if (this.openCount == 0) return; // Paper - Prevent ContainerOpenersCounter openCount from going negative
          int i = this.openCount--;
 @@ -92,7 +94,7 @@ public abstract class ContainerOpenersCounter {
          float f = 5.0F;

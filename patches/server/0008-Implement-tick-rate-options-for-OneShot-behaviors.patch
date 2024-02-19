@@ -5,13 +5,13 @@ Subject: [PATCH] Implement tick rate options for OneShot behaviors
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java b/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
-index 57ef7fbba3028c28231abf7b7ae78aa019323536..30aed0b871fc3544d37fb307a6b08b364172c876 100644
+index 1e71cde7cb7654f1c21ae5e27e2fad7b58f593eb..9764d59012c8e1dac52a8134811fe09a453b7cd6 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/Behavior.java
-@@ -16,6 +16,16 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
-     // Paper start - configurable behavior tick rate and timings
+@@ -17,6 +17,16 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
      private final String configKey;
      private final co.aikar.timings.Timing timing;
+     // Paper end - configurable behavior tick rate and timings
 +    // Nabulus start
 +    public static String getConfigKey(String behaviorClass) {
 +        String key = io.papermc.paper.util.ObfHelper.INSTANCE.deobfClassName(behaviorClass);
@@ -22,9 +22,9 @@ index 57ef7fbba3028c28231abf7b7ae78aa019323536..30aed0b871fc3544d37fb307a6b08b36
 +        return key.toLowerCase(java.util.Locale.ROOT);
 +    }
 +    // Nabulus end
-     // Paper end
  
      public Behavior(Map<MemoryModuleType<?>, MemoryStatus> requiredMemoryState) {
+         this(requiredMemoryState, 60);
 @@ -31,12 +41,7 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
          this.maxDuration = maxRunTime;
          this.entryCondition = requiredMemoryState;
@@ -37,7 +37,7 @@ index 57ef7fbba3028c28231abf7b7ae78aa019323536..30aed0b871fc3544d37fb307a6b08b36
 -        this.configKey = key.toLowerCase(java.util.Locale.ROOT);
 +        this.configKey = getConfigKey(this.getClass().getName()); // Nabulus
          this.timing = co.aikar.timings.MinecraftTimings.getBehaviorTimings(configKey);
-         // Paper end
+         // Paper end - configurable behavior tick rate and timings
      }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java b/src/main/java/net/minecraft/world/entity/ai/behavior/OneShot.java
 index dde5c53550ddbdfc8288f725468924b35ea5b05e..ca2d3a0f67a2f07ec33394d1aa3f2ca2f29af404 100644
