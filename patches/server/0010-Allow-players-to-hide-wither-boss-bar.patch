@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Mon, 11 Mar 2024 18:40:31 +0930
+Subject: [PATCH] Allow players to hide wither boss bar
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+index ea8883b0661e894a466eca24bfc247ac37f40a81..26f7cb0178f05163d14ef325b04e07c248d5a6d2 100644
+--- a/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/src/main/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -89,6 +89,21 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob
+ 
+     public void setCanTravelThroughPortals(boolean canPortal) { this.canPortal = canPortal; }
+     // Paper end
++    // Nabulus start
++    public boolean hideBossBar = false;
++    private void updateBossBar() {
++        Component customName = getCustomName();
++        if (customName != null) {
++            String collapsedName = customName.tryCollapseToString();
++            hideBossBar = collapsedName != null && collapsedName.equalsIgnoreCase("nobossbar");
++        } else {
++            hideBossBar = false;
++        }
++        if (bossEvent != null && hideBossBar) {
++            bossEvent.removeAllPlayers();
++        }
++    }
++    // Nabulus end
+ 
+     public WitherBoss(EntityType<? extends WitherBoss> type, Level world) {
+         super(type, world);
+@@ -147,6 +162,7 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob
+     @Override
+     public void setCustomName(@Nullable Component name) {
+         super.setCustomName(name);
++        updateBossBar(); // Nabulus
+         this.bossEvent.setName(this.getDisplayName());
+     }
+ 
+@@ -421,7 +437,7 @@ public class WitherBoss extends Monster implements PowerableMob, RangedAttackMob
+     @Override
+     public void startSeenByPlayer(ServerPlayer player) {
+         super.startSeenByPlayer(player);
+-        this.bossEvent.addPlayer(player);
++        if (!hideBossBar) this.bossEvent.addPlayer(player); // Nabulus
+     }
+ 
+     @Override
