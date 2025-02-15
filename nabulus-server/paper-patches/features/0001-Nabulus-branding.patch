@@ -10,7 +10,7 @@ index 91b7db7128ace54beaa6ea4e29a5a6f157a4acf9..45799ff3a08dcbb9807d4a2ef3396462
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
  val alsoShade: Configuration by configurations.creating
- 
+
  dependencies {
 -    implementation(project(":pufferfish-api")) // Pufferfish // Paper
 +    implementation(project(":nabulus-api")) // Nabulus
@@ -41,9 +41,9 @@ index 80553face9c70c2a3d897681e7761df85b22d464..df1fe60f2f26b1dae0a724cb55a2337d
 @@ -11,7 +11,7 @@ public final class Versioning {
      public static String getBukkitVersion() {
          String result = "Unknown-Version";
- 
+
 -        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/gg.pufferfish.pufferfish/pufferfish-api/pom.properties"); // Pufferfish
 +        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.froobworld.nabulus/nabulus-api/pom.properties"); // Nabulus
          Properties properties = new Properties();
- 
+
          if (stream != null) {

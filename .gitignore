@@ -50,3 +50,10 @@ forktest-server
 forktest-api
 
 !gradle/wrapper/gradle-wrapper.jar
+
+nabulus-api/src
+nabulus-api/build.gradle.kts
+nabulus-server/src
+nabulus-server/build.gradle.kts
+paper-server
+patches

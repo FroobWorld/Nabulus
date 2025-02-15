@@ -9,11 +9,11 @@ index c1510d9167f466d3b7e3756353224f12f3876442..d4f0561741e71e10bf08448a02373207
 --- a/src/main/java/ca/spottedleaf/dataconverter/minecraft/versions/V1022.java
 +++ b/src/main/java/ca/spottedleaf/dataconverter/minecraft/versions/V1022.java
 @@ -15,6 +15,7 @@ public final class V1022 {
- 
+
              WalkerUtils.convertList(MCTypeRegistry.ITEM_STACK, data, "Inventory", fromVersion, toVersion);
              WalkerUtils.convertList(MCTypeRegistry.ITEM_STACK, data, "EnderItems", fromVersion, toVersion);
 +            WalkerUtils.convertList(MCTypeRegistry.ITEM_STACK, data, "Nabulus.CreativeLevelInventory", fromVersion, toVersion);
- 
+
              WalkerUtils.convert(MCTypeRegistry.ENTITY, data, "ShoulderEntityLeft", fromVersion, toVersion);
              WalkerUtils.convert(MCTypeRegistry.ENTITY, data, "ShoulderEntityRight", fromVersion, toVersion);
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
@@ -27,7 +27,7 @@ index c396580a9cfd86ff261bed439bb4662ae88010b5..7e5f08b33abc93d98622c504a48a295b
 +        this.chooseInventory(); // Nabulus
      }
      // CraftBukkit end
- 
+
 @@ -1402,6 +1403,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
                  this.unsetRemoved();
                  // CraftBukkit end
@@ -38,7 +38,7 @@ index c396580a9cfd86ff261bed439bb4662ae88010b5..7e5f08b33abc93d98622c504a48a295b
                  worldserver.addDuringTeleport(this);
 @@ -2035,12 +2037,22 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player imple
      }
- 
+
      public void restoreFrom(ServerPlayer oldPlayer, boolean alive) {
 +        // Nabulus start
 +        this.restoreFrom(oldPlayer, alive, false);
@@ -80,7 +80,7 @@ index 5e2c4969e77c669acbb4a13c07033cb267c3d586..6f4fd5659a2e5f537ab1cdf4d1ac63e7
 +        DimensionTransition dimensiontransition;
 +        if (location == null) {
 +            dimensiontransition = entityplayer.findRespawnPositionAndUseSpawnBlock(flag, DimensionTransition.DO_NOTHING, reason);
- 
+
 +            if (!flag) entityplayer.reset(); // SPIGOT-4785
 +            isRespawn = true; // Paper - Add PlayerPostRespawnEvent
 +        } else {
@@ -107,7 +107,7 @@ index 5e2c4969e77c669acbb4a13c07033cb267c3d586..6f4fd5659a2e5f537ab1cdf4d1ac63e7
 -        boolean isRespawn = false;
 +        //boolean isRespawn = false; // Nabulus - moved up
          // Paper end - Add PlayerPostRespawnEvent
- 
+
          // CraftBukkit start - fire PlayerRespawnEvent
 +        // Nabulus start - moved up
 +        /*
@@ -144,7 +144,7 @@ index 45761c113116ae7417e6ae99069bff35dbccdf30..3dd19ef284dcab420dfc56c100ccf1df
 --- a/src/main/java/net/minecraft/world/entity/PortalProcessor.java
 +++ b/src/main/java/net/minecraft/world/entity/PortalProcessor.java
 @@ -30,6 +30,11 @@ public class PortalProcessor {
- 
+
      @Nullable
      public DimensionTransition getPortalDestination(ServerLevel world, Entity entity) {
 +        // Nabulus start
@@ -154,7 +154,7 @@ index 45761c113116ae7417e6ae99069bff35dbccdf30..3dd19ef284dcab420dfc56c100ccf1df
 +        // Nabulus end
          return this.portal.getPortalDestination(world, entity, this.entryPosition);
      }
- 
+
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
 index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..591797efe64ca85da29fb876d00cf7fa8dd84ecc 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
@@ -162,7 +162,7 @@ index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..591797efe64ca85da29fb876d00cf7fa
 @@ -202,6 +202,40 @@ public abstract class Player extends LivingEntity {
      public boolean fauxSleeping;
      public int oldLevel = -1;
- 
+
 +    // Nabulus start
 +    protected final Inventory normalInventory = new Inventory(this);
 +    protected final Inventory creativeLevelInventory = new Inventory(this);
@@ -209,7 +209,7 @@ index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..591797efe64ca85da29fb876d00cf7fa
          this.containerMenu = this.inventoryMenu;
          this.moveTo((double) pos.getX() + 0.5D, (double) (pos.getY() + 1), (double) pos.getZ() + 0.5D, yaw, 0.0F);
 @@ -877,6 +912,15 @@ public abstract class Player extends LivingEntity {
- 
+
          this.inventory.load(nbttaglist);
          this.inventory.selected = nbt.getInt("SelectedItemSlot");
 +        // Nabulus start
@@ -248,7 +248,7 @@ index 85ba843ce7e1f62971e736fa2cc028c47b274ce4..dfcea62791961e82bc1f0dd26632d239
          PrimaryLevelData worlddataserver = PrimaryLevelData.parse(dynamic1, worldsettings, worlddimensions_b.specialWorldProperty(), generatorsettings.options(), lifecycle);
          worlddataserver.pdc = ((Dynamic<Tag>) dynamic1).getElement("BukkitValues", null); // CraftBukkit - Add PDC to world
 +        worlddataserver.creativeLevel = ((Dynamic<Tag>) dynamic1).get("Nabulus.CreativeLevel").asBoolean(false); // Nabulus
- 
+
          return new LevelDataAndDimensions(worlddataserver, worlddimensions_b);
      }
 diff --git a/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java b/src/main/java/net/minecraft/world/level/storage/PrimaryLevelData.java
