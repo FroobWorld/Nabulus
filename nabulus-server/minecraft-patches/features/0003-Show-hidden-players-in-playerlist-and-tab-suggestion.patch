@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Tue, 1 Mar 2022 19:44:48 +0930
+Subject: [PATCH] Show hidden players in playerlist and tab suggestions
+
+
+diff --git a/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java b/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
+index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35bfc4170d 100644
+--- a/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
++++ b/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
+@@ -36,7 +36,7 @@ public class ListPlayersCommand {
+         List<ServerPlayer> playersTemp = playerList.getPlayers();
+         if (source.getBukkitSender() instanceof org.bukkit.entity.Player) {
+             org.bukkit.entity.Player sender = (org.bukkit.entity.Player) source.getBukkitSender();
+-            playersTemp = playersTemp.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList());
++            //playersTemp = playersTemp.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList()); // Nabulus
+         }
+         final List<ServerPlayer> players = playersTemp;
+         // CraftBukkit end
+diff --git a/src/minecraft/java/net/minecraft/server/players/PlayerList.java b/src/minecraft/java/net/minecraft/server/players/PlayerList.java
+index 9279e4bb6cd1b108ebffd8fe9887f4d231413376..deaf5bc060e3eda99ff3fc50b41938ca1afc9613 100644
+--- a/src/minecraft/java/net/minecraft/server/players/PlayerList.java
++++ b/src/minecraft/java/net/minecraft/server/players/PlayerList.java
+@@ -345,7 +345,7 @@ public abstract class PlayerList {
+         for (int i = 0; i < this.players.size(); ++i) {
+             ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);
+ 
+-            if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
++            if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer) || true) { // Nabulus
+                 // Paper start - Add Listing API for Player
+                 if (entityplayer1.getBukkitEntity().isListed(bukkitPlayer)) {
+                 // Paper end - Add Listing API for Player
+@@ -358,7 +358,7 @@ public abstract class PlayerList {
+             }
+ 
+             if (entityplayer1 == player || !bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) { // Paper - Use single player info update packet on join; Don't include joining player
+-                continue;
++                //continue; // Nabulus
+             }
+ 
+             onlinePlayers.add(entityplayer1); // Paper - Use single player info update packet on join
+@@ -590,6 +590,7 @@ public abstract class PlayerList {
+             if (otherPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
+                 otherPlayer.connection.send(packet);
+             } else {
++                otherPlayer.connection.send(packet); // Nabulus
+                 otherPlayer.getBukkitEntity().onEntityRemove(player);
+             }
+         }

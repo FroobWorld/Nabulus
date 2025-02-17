@@ -4,16 +4,16 @@ Date: Sat, 16 Dec 2023 15:18:46 +0930
 Subject: [PATCH] Don't show smoke for silent fireworks
 
 
-diff --git a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-index 09d465947a5720e05c350d455c86002682104079..7466eeb80f6db746a19a87abe070b8cdd8927859 100644
---- a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-+++ b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -178,7 +178,7 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
+diff --git a/src/minecraft/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java b/src/minecraft/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+index 774ca9e0b56fd175ae246051de762d0c4256ca58..1d340b1176a201e6bfacc70c453fbbc33dfd1d48 100644
+--- a/src/minecraft/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
++++ b/src/minecraft/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+@@ -184,7 +184,7 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
          }
  
-         ++this.life;
+         this.life++;
 -        if (this.level().isClientSide && this.life % 2 < 2) {
 +        if (this.level().isClientSide && this.life % 2 < 2 && !this.isSilent()) { // Nabulus - don't show firework smoke for silent fireworks
-             this.level().addParticle(ParticleTypes.FIREWORK, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
-         }
- 
+             this.level()
+                 .addParticle(
+                     ParticleTypes.FIREWORK,
