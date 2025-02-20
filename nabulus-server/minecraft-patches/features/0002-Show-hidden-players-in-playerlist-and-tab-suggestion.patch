@@ -4,10 +4,10 @@ Date: Tue, 1 Mar 2022 19:44:48 +0930
 Subject: [PATCH] Show hidden players in playerlist and tab suggestions
 
 
-diff --git a/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java b/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
+diff --git a/net/minecraft/server/commands/ListPlayersCommand.java b/net/minecraft/server/commands/ListPlayersCommand.java
 index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35bfc4170d 100644
---- a/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
-+++ b/src/minecraft/java/net/minecraft/server/commands/ListPlayersCommand.java
+--- a/net/minecraft/server/commands/ListPlayersCommand.java
++++ b/net/minecraft/server/commands/ListPlayersCommand.java
 @@ -36,7 +36,7 @@ public class ListPlayersCommand {
          List<ServerPlayer> playersTemp = playerList.getPlayers();
          if (source.getBukkitSender() instanceof org.bukkit.entity.Player) {
@@ -17,10 +17,10 @@ index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35
          }
          final List<ServerPlayer> players = playersTemp;
          // CraftBukkit end
-diff --git a/src/minecraft/java/net/minecraft/server/players/PlayerList.java b/src/minecraft/java/net/minecraft/server/players/PlayerList.java
+diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
 index 9279e4bb6cd1b108ebffd8fe9887f4d231413376..deaf5bc060e3eda99ff3fc50b41938ca1afc9613 100644
---- a/src/minecraft/java/net/minecraft/server/players/PlayerList.java
-+++ b/src/minecraft/java/net/minecraft/server/players/PlayerList.java
+--- a/net/minecraft/server/players/PlayerList.java
++++ b/net/minecraft/server/players/PlayerList.java
 @@ -345,7 +345,7 @@ public abstract class PlayerList {
          for (int i = 0; i < this.players.size(); ++i) {
              ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);

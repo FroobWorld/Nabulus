@@ -4,10 +4,10 @@ Date: Fri, 10 Feb 2023 19:54:12 +0930
 Subject: [PATCH] Add silent chest flag to players
 
 
-diff --git a/src/minecraft/java/net/minecraft/world/entity/player/Player.java b/src/minecraft/java/net/minecraft/world/entity/player/Player.java
+diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
 index 141478c5bf94827eaf89688cb47346fde0394d03..ca792b5da7391b1cc406dc013ca8319f432af830 100644
---- a/src/minecraft/java/net/minecraft/world/entity/player/Player.java
-+++ b/src/minecraft/java/net/minecraft/world/entity/player/Player.java
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
 @@ -206,6 +206,7 @@ public abstract class Player extends LivingEntity {
      public int oldLevel = -1;
  
@@ -16,10 +16,10 @@ index 141478c5bf94827eaf89688cb47346fde0394d03..ca792b5da7391b1cc406dc013ca8319f
      protected final Inventory normalInventory = new Inventory(this);
      protected final Inventory creativeLevelInventory = new Inventory(this);
      private boolean inventoriesLoaded = false;
-diff --git a/src/minecraft/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/src/minecraft/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+diff --git a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 index de3fc7062377d7579c74b8adcfc54c87bca23fe5..11be1505d28109876850ad7fab803d2ebf572e69 100644
---- a/src/minecraft/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-+++ b/src/minecraft/java/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
+--- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
++++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 @@ -38,6 +38,7 @@ public abstract class ContainerOpenersCounter {
      protected abstract boolean isOwnContainer(Player player);
  
@@ -45,10 +45,10 @@ index de3fc7062377d7579c74b8adcfc54c87bca23fe5..11be1505d28109876850ad7fab803d2e
      }
  
      public void recheckOpeners(Level level, BlockPos pos, BlockState state) {
-diff --git a/src/minecraft/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/src/minecraft/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+diff --git a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 index a2ae4b47d742e7fb9809cfc4575517c06400ec61..854f3475236b41bed38e2d14d181926ba3b3afe6 100644
---- a/src/minecraft/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-+++ b/src/minecraft/java/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
+--- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 @@ -192,7 +192,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override

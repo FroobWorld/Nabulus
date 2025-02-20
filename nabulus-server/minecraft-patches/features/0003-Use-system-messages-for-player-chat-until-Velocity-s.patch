@@ -5,10 +5,10 @@ Subject: [PATCH] Use system messages for player chat until Velocity support
  added
 
 
-diff --git a/src/minecraft/java/net/minecraft/network/chat/OutgoingChatMessage.java b/src/minecraft/java/net/minecraft/network/chat/OutgoingChatMessage.java
+diff --git a/net/minecraft/network/chat/OutgoingChatMessage.java b/net/minecraft/network/chat/OutgoingChatMessage.java
 index 4635182c73f28f63ba84982cb6bcb422221b738e..19d87c84ebd788ff6ed09dfd1b45ddc8a9f8be64 100644
---- a/src/minecraft/java/net/minecraft/network/chat/OutgoingChatMessage.java
-+++ b/src/minecraft/java/net/minecraft/network/chat/OutgoingChatMessage.java
+--- a/net/minecraft/network/chat/OutgoingChatMessage.java
++++ b/net/minecraft/network/chat/OutgoingChatMessage.java
 @@ -27,6 +27,7 @@ public interface OutgoingChatMessage {
          }
          public void sendToPlayer(ServerPlayer player, boolean filtered, ChatType.Bound boundType, @javax.annotation.Nullable Component unsigned) {

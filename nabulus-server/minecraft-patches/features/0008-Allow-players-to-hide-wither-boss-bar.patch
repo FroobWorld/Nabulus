@@ -4,10 +4,10 @@ Date: Mon, 11 Mar 2024 18:40:31 +0930
 Subject: [PATCH] Allow players to hide wither boss bar
 
 
-diff --git a/src/minecraft/java/net/minecraft/world/entity/boss/wither/WitherBoss.java b/src/minecraft/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+diff --git a/net/minecraft/world/entity/boss/wither/WitherBoss.java b/net/minecraft/world/entity/boss/wither/WitherBoss.java
 index afe43600c4976e01e61d716034a2823d50fb55cb..2553126e05d08eca41ee145e7a08f7e5456af7fb 100644
---- a/src/minecraft/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
-+++ b/src/minecraft/java/net/minecraft/world/entity/boss/wither/WitherBoss.java
+--- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
 @@ -77,6 +77,21 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      private static final TargetingConditions.Selector LIVING_ENTITY_SELECTOR = (entity, level) -> !entity.getType().is(EntityTypeTags.WITHER_FRIENDS)
          && entity.attackable();
