@@ -1,40 +1,58 @@
-import io.papermc.paperweight.util.constants.*
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    java
-    `maven-publish`
-    id("com.github.johnrengelman.shadow") version "8.1.0" apply false
-    id("io.papermc.paperweight.patcher") version "1.7.1"
+    id("io.papermc.paperweight.patcher") version "2.0.0-beta.14"
 }
 
-repositories {
-    mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/") {
-        content { onlyForConfigurations(PAPERCLIP_CONFIG) }
-    }
-}
+paperweight {
+    upstreams.paper {
+        ref = providers.gradleProperty("paperRef")
 
-dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.10.3:fat")
-    decompiler("org.vineflower:vineflower:1.10.1")
-    paperclip("io.papermc:paperclip:3.0.3")
-}
-
-allprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+        patchFile {
+            path = "paper-server/build.gradle.kts"
+            outputFile = file("nabulus-server/build.gradle.kts")
+            patchFile = file("nabulus-server/build.gradle.kts.patch")
+        }
+        patchFile {
+            path = "paper-api/build.gradle.kts"
+            outputFile = file("nabulus-api/build.gradle.kts")
+            patchFile = file("nabulus-api/build.gradle.kts.patch")
+        }
+        patchDir("paperApi") {
+            upstreamPath = "paper-api"
+            excludes = setOf("build.gradle.kts")
+            patchesDir = file("nabulus-api/paper-patches")
+            outputDir = file("paper-api")
         }
     }
 }
 
+val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
+
 subprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
+
+    extensions.configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven(paperMavenPublicUrl)
+    }
+
+    tasks.withType<AbstractArchiveTask>().configureEach {
+        isPreserveFileTimestamps = false
+        isReproducibleFileOrder = true
+    }
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
+        options.release = 21
+        options.isFork = true
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()
@@ -42,81 +60,22 @@ subprojects {
     tasks.withType<ProcessResources> {
         filteringCharset = Charsets.UTF_8.name()
     }
-
-    repositories {
-        mavenCentral()
-        maven("https://oss.sonatype.org/content/groups/public/")
-        maven("https://papermc.io/repo/repository/maven-public/")
-        maven("https://ci.emc.gs/nexus/content/groups/aikar/")
-        maven("https://repo.aikar.co/content/groups/aikar")
-        maven("https://repo.md-5.net/content/repositories/releases/")
-        maven("https://hub.spigotmc.org/nexus/content/groups/public/")
-        maven("https://jitpack.io")
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") // TODO - Adventure snapshot
-    }
-}
-
-paperweight {
-    serverProject.set(project(":nabulus-server"))
-
-    remapRepo.set("https://maven.fabricmc.net/")
-    decompileRepo.set("https://files.minecraftforge.net/maven/")
-
-/*    usePaperUpstream(providers.gradleProperty("paperRef")) {
-        withPaperPatcher {
-            apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
-            apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
-
-            serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
-            serverOutputDir.set(layout.projectDirectory.dir("nabulus-server"))
-        }
-
-        patchTasks.register("generatedApi") {
-            isBareDirectory = true
-            upstreamDirPath = "paper-api-generator/generated"
-            patchDir = layout.projectDirectory.dir("patches/generated-api")
-            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
-        }
-    } */
-
-    useStandardUpstream("pufferfish") {
-        url.set(github("pufferfish-gg", "Pufferfish"))
-        ref.set(providers.gradleProperty("paperRef"))
-
-        withStandardPatcher {
-            apiSourceDirPath.set("pufferfish-api")
-            serverSourceDirPath.set("pufferfish-server")
-
-            apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
-            apiOutputDir.set(layout.projectDirectory.dir("nabulus-api"))
-
-            serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
-            serverOutputDir.set(layout.projectDirectory.dir("nabulus-server"))
-        }
-
-        patchTasks.register("generatedApi") {
-            isBareDirectory = true
-            upstreamDirPath = "paper-api-generator/generated"
-            patchDir = layout.projectDirectory.dir("patches/generated-api")
-            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+    tasks.withType<Test> {
+        testLogging {
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+            events(TestLogEvent.STANDARD_OUT)
         }
     }
 
-}
-
-//
-// Everything below here is optional if you don't care about publishing API or dev bundles to your repository
-//
-
-tasks.generateDevelopmentBundle {
-    apiCoordinates.set("com.froobworld.nabulus:nabulus-api")
-    libraryRepositories.set(
-        listOf(
-            "https://repo.maven.apache.org/maven2/",
-            "https://libraries.minecraft.net/",
-            "https://papermc.io/repo/repository/maven-public/",
-            "https://maven.quiltmc.org/repository/release/",
-            // "https://my.repo/", // This should be a repo hosting your API (in this example, 'com.example.paperfork:forktest-api')
-        )
-    )
+    extensions.configure<PublishingExtension> {
+        repositories {
+            /*
+            maven("https://repo.papermc.io/repository/maven-snapshots/") {
+                name = "paperSnapshots"
+                credentials(PasswordCredentials::class)
+            }
+             */
+        }
+    }
 }

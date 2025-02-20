@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Tue, 1 Mar 2022 19:44:48 +0930
+Subject: [PATCH] Show hidden players in playerlist and tab suggestions
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 59eddee7e75e1de332346ffe73fb88eb1ae14db6..abfa6d1ac96866094e6810893e40b6143f0a9308 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2631,7 +2631,7 @@ public final class CraftServer implements Server {
+         PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
+         String token = event.getLastToken();
+         for (Player p : this.getOnlinePlayers()) {
+-            if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token)) {
++            if (StringUtil.startsWithIgnoreCase(p.getName(), token)) { // Nabulus - remove canSee check
+                 completions.add(p.getName());
+             }
+         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 3260f20b667918dd7cd641d5d96688721fce2f9c..6b0093ce63f36b54d6af368251d62ccb0575e1f1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -567,7 +567,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         getHandle().listName = name == null ? null : io.papermc.paper.adventure.PaperAdventure.asVanilla(name);
+         if (getHandle().connection == null) return; // Updates are possible before the player has fully joined
+         for (ServerPlayer player : server.getHandle().players) {
+-            if (player.getBukkitEntity().canSee(this)) {
++            if (player.getBukkitEntity().canSee(this) || true) { // Nabulus
+                 player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
+             }
+         }
+@@ -598,7 +598,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         this.getHandle().listName = name.equals(this.getName()) ? null : CraftChatMessage.fromStringOrNull(name);
+         if (this.getHandle().connection == null) return; // Paper - Updates are possible before the player has fully joined
+         for (ServerPlayer player : (List<ServerPlayer>) this.server.getHandle().players) {
+-            if (player.getBukkitEntity().canSee(this)) {
++            if (player.getBukkitEntity().canSee(this) || true) { // Nabulus
+                 player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
+             }
+         }
+@@ -2068,11 +2068,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         // Remove this entity from the hidden player's EntityTrackerEntry
+         // Paper start
+         Entity other = ((CraftEntity) entity).getHandle();
+-        unregisterEntity(other);
++        unregisterEntity(other, false); // Nabulus
+ 
+         server.getPluginManager().callEvent(new PlayerHideEntityEvent(this, entity));
+     }
+     private void unregisterEntity(Entity other) {
++        // Nabulus start
++        unregisterEntity(other, true);
++    }
++    private void unregisterEntity(Entity other, boolean removeFromPlayerList) {
++        // Nabulus end
+         // Paper end
+         ChunkMap tracker = ((ServerLevel) this.getHandle().level()).getChunkSource().chunkMap;
+         ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
+@@ -2081,7 +2086,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         }
+ 
+         // Remove the hidden entity from this player user list, if they're on it
+-        if (other instanceof ServerPlayer) {
++        if (other instanceof ServerPlayer && removeFromPlayerList) { // Nabulus
+             ServerPlayer otherPlayer = (ServerPlayer) other;
+             if (otherPlayer.sentListPacket) {
+                 this.getHandle().connection.send(new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getUUID())));
