@@ -5,10 +5,10 @@ Subject: [PATCH] Show hidden players in playerlist and tab suggestions
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 59eddee7e75e1de332346ffe73fb88eb1ae14db6..abfa6d1ac96866094e6810893e40b6143f0a9308 100644
+index 1fb98caf0101fcbf3f045c0725c89fcbff4e7a7e..ba38e1cd92b7e08bda1e22ea8e583ee3206e2c0c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2631,7 +2631,7 @@ public final class CraftServer implements Server {
+@@ -2632,7 +2632,7 @@ public final class CraftServer implements Server {
          PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
          String token = event.getLastToken();
          for (Player p : this.getOnlinePlayers()) {
@@ -18,10 +18,10 @@ index 59eddee7e75e1de332346ffe73fb88eb1ae14db6..abfa6d1ac96866094e6810893e40b614
              }
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 3260f20b667918dd7cd641d5d96688721fce2f9c..6b0093ce63f36b54d6af368251d62ccb0575e1f1 100644
+index cc4b2061ae9cbd5a30b297be477cde703203b3f5..19fa850cc4608efa2cbb2351ae4c16483143e690 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -567,7 +567,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -564,7 +564,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          getHandle().listName = name == null ? null : io.papermc.paper.adventure.PaperAdventure.asVanilla(name);
          if (getHandle().connection == null) return; // Updates are possible before the player has fully joined
          for (ServerPlayer player : server.getHandle().players) {
@@ -30,7 +30,7 @@ index 3260f20b667918dd7cd641d5d96688721fce2f9c..6b0093ce63f36b54d6af368251d62ccb
                  player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
              }
          }
-@@ -598,7 +598,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -595,7 +595,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          this.getHandle().listName = name.equals(this.getName()) ? null : CraftChatMessage.fromStringOrNull(name);
          if (this.getHandle().connection == null) return; // Paper - Updates are possible before the player has fully joined
          for (ServerPlayer player : (List<ServerPlayer>) this.server.getHandle().players) {
@@ -39,7 +39,7 @@ index 3260f20b667918dd7cd641d5d96688721fce2f9c..6b0093ce63f36b54d6af368251d62ccb
                  player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -2068,11 +2068,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2065,11 +2065,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          // Remove this entity from the hidden player's EntityTrackerEntry
          // Paper start
          Entity other = ((CraftEntity) entity).getHandle();
@@ -57,7 +57,7 @@ index 3260f20b667918dd7cd641d5d96688721fce2f9c..6b0093ce63f36b54d6af368251d62ccb
          // Paper end
          ChunkMap tracker = ((ServerLevel) this.getHandle().level()).getChunkSource().chunkMap;
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
-@@ -2081,7 +2086,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -2078,7 +2083,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          }
  
          // Remove the hidden entity from this player user list, if they're on it

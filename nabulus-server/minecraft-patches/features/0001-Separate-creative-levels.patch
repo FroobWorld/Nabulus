@@ -17,10 +17,10 @@ index 4f35484ed524dbf09cf9e8b1bb999fc98ec0bb0f..0ca38444ac9e9282d1bb4500eb0740d0
              WalkerUtils.convert(MCTypeRegistry.ENTITY, data, "ShoulderEntityLeft", fromVersion, toVersion);
              WalkerUtils.convert(MCTypeRegistry.ENTITY, data, "ShoulderEntityRight", fromVersion, toVersion);
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 57d432dc9e8d8e9a3e088e7c40b35178c30fe786..8c057b93b12673eaa822222d7cdc3e1360fd72f3 100644
+index dece7eb69603ffc8e50e8096cb07c02a897bf49e..530e778d27e8a869ff8f9b46104cdb2970b7b699 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -732,6 +732,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -739,6 +739,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          }
          this.setLevel(level);
          this.gameMode.setLevel(level);
@@ -28,7 +28,7 @@ index 57d432dc9e8d8e9a3e088e7c40b35178c30fe786..8c057b93b12673eaa822222d7cdc3e13
      }
      // CraftBukkit end
  
-@@ -1447,6 +1448,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1455,6 +1456,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
                  this.unsetRemoved();
                  // CraftBukkit end
                  this.setServerLevel(level);
@@ -36,7 +36,7 @@ index 57d432dc9e8d8e9a3e088e7c40b35178c30fe786..8c057b93b12673eaa822222d7cdc3e13
                  this.connection.internalTeleport(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives()); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  level.addDuringTeleport(this);
-@@ -2040,10 +2042,20 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2048,10 +2050,20 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
      }
  
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
@@ -57,7 +57,7 @@ index 57d432dc9e8d8e9a3e088e7c40b35178c30fe786..8c057b93b12673eaa822222d7cdc3e13
          if (keepEverything) {
              this.getAttributes().assignBaseValues(that.getAttributes());
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
-@@ -2082,6 +2094,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2090,6 +2102,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.chunkTrackingView = that.chunkTrackingView;
@@ -66,7 +66,7 @@ index 57d432dc9e8d8e9a3e088e7c40b35178c30fe786..8c057b93b12673eaa822222d7cdc3e13
          this.setShoulderEntityRight(that.getShoulderEntityRight());
          this.setLastDeathLocation(that.getLastDeathLocation());
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index 5a4960fdbd97d830ac79845697eea9372c48a13b..9279e4bb6cd1b108ebffd8fe9887f4d231413376 100644
+index c9dbe659374e3ce140316116e05110567e44b810..a0c446f505339f9c620a3c461f9d58d27d54df99 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
 @@ -725,8 +725,27 @@ public abstract class PlayerList {
@@ -122,7 +122,7 @@ index 5a4960fdbd97d830ac79845697eea9372c48a13b..9279e4bb6cd1b108ebffd8fe9887f4d2
          if (teleportTransition == null) { // Paper - Add PlayerPostRespawnEvent - diff on change - spigot early returns if respawn pos is null, that is how they handle disconnected player in respawn event
              return player;
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 1b54cf07616a10d93e9336dbd299ba5f09678a28..a4cd4fa01bf7a64f1902b59fbf6dd7c4e660a1f4 100644
+index b2b61203438bb1fad1ee807729781718d2467155..53f7edf18bd80ab9dde38de948430d70a15b92b1 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
 @@ -3732,6 +3732,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
