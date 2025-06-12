@@ -5,17 +5,17 @@ Subject: [PATCH] Add silent chest flag to players
 
 
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 141478c5bf94827eaf89688cb47346fde0394d03..ca792b5da7391b1cc406dc013ca8319f432af830 100644
+index 352c090b174bea5a661bc63df71b8b2dce4696e3..95854156a406b05cb35ca2911688aaaa02f81a27 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -206,6 +206,7 @@ public abstract class Player extends LivingEntity {
+@@ -225,6 +225,7 @@ public abstract class Player extends LivingEntity {
      public int oldLevel = -1;
  
      // Nabulus start
 +    public boolean silentChests = false;
-     protected final Inventory normalInventory = new Inventory(this);
-     protected final Inventory creativeLevelInventory = new Inventory(this);
-     private boolean inventoriesLoaded = false;
+     protected final Inventory normalInventory = new Inventory(this, this.createEquipment());
+     protected final Inventory creativeLevelInventory = new Inventory(this, this.createEquipment());
+     public boolean usingNormalInventory = true;
 diff --git a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 index de3fc7062377d7579c74b8adcfc54c87bca23fe5..11be1505d28109876850ad7fab803d2ebf572e69 100644
 --- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
@@ -46,10 +46,10 @@ index de3fc7062377d7579c74b8adcfc54c87bca23fe5..11be1505d28109876850ad7fab803d2e
  
      public void recheckOpeners(Level level, BlockPos pos, BlockState state) {
 diff --git a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-index a2ae4b47d742e7fb9809cfc4575517c06400ec61..854f3475236b41bed38e2d14d181926ba3b3afe6 100644
+index ebea67223ce1d350087c73dff0cc3fe6d7b47ca0..fdcd62f2c4e4a66607f08b3094191506b2dee86d 100644
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -192,7 +192,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -201,7 +201,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void startOpen(Player player) {
@@ -58,7 +58,7 @@ index a2ae4b47d742e7fb9809cfc4575517c06400ec61..854f3475236b41bed38e2d14d181926b
              if (this.openCount < 0) {
                  this.openCount = 0;
              }
-@@ -210,7 +210,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -219,7 +219,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void stopOpen(Player player) {

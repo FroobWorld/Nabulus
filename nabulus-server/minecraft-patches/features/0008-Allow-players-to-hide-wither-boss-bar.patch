@@ -5,10 +5,10 @@ Subject: [PATCH] Allow players to hide wither boss bar
 
 
 diff --git a/net/minecraft/world/entity/boss/wither/WitherBoss.java b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-index afe43600c4976e01e61d716034a2823d50fb55cb..2553126e05d08eca41ee145e7a08f7e5456af7fb 100644
+index 787b74c5aa02afc4ba95fa1cdaf6cc21b6554b56..953fb6f1851815d0d7397d5d3a1cb6e09bdf20de 100644
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -77,6 +77,21 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+@@ -79,6 +79,21 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      private static final TargetingConditions.Selector LIVING_ENTITY_SELECTOR = (entity, level) -> !entity.getType().is(EntityTypeTags.WITHER_FRIENDS)
          && entity.attackable();
      private static final TargetingConditions TARGETING_CONDITIONS = TargetingConditions.forCombat().range(20.0).selector(LIVING_ENTITY_SELECTOR);
@@ -30,7 +30,7 @@ index afe43600c4976e01e61d716034a2823d50fb55cb..2553126e05d08eca41ee145e7a08f7e5
  
      public WitherBoss(EntityType<? extends WitherBoss> entityType, Level level) {
          super(entityType, level);
-@@ -131,6 +146,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+@@ -133,6 +148,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      @Override
      public void setCustomName(@Nullable Component name) {
          super.setCustomName(name);
@@ -38,7 +38,7 @@ index afe43600c4976e01e61d716034a2823d50fb55cb..2553126e05d08eca41ee145e7a08f7e5
          this.bossEvent.setName(this.getDisplayName());
      }
  
-@@ -401,7 +417,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+@@ -403,7 +419,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      @Override
      public void startSeenByPlayer(ServerPlayer player) {
          super.startSeenByPlayer(player);

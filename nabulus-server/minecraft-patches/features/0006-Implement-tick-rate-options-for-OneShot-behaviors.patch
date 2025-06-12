@@ -14,7 +14,7 @@ index 5b0cadd2544fb2a627822e645ff32fec2e9cfda9..9a56c3a9dc97c5880bd6ac6f703d640f
      private final String configKey; // Paper - configurable behavior tick rate and timings
 +    // Nabulus start
 +    public static String getConfigKey(String behaviorClass) {
-+        String key = io.papermc.paper.util.MappingEnvironment.reobf() ? io.papermc.paper.util.ObfHelper.INSTANCE.deobfClassName(behaviorClass.getClass().getName()) : behaviorClass.getClass().getName();
++        String key = io.papermc.paper.util.MappingEnvironment.reobf() ? io.papermc.paper.util.ObfHelper.INSTANCE.deobfClassName(behaviorClass) : behaviorClass;
 +        int lastSeparator = key.lastIndexOf('.');
 +        if (lastSeparator != -1) {
 +            key = key.substring(lastSeparator + 1);
