@@ -5,10 +5,10 @@ Subject: [PATCH] Dispatch Discord commands through CommandMap
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index bfdf63b42ccfb6728fb99fa7ba45ee413b86d77a..961a933046fba252fe2e4d691ae16deb4609399d 100644
+index 9b19fab5b49a0894033b6ebbd0cda16ee6e775cf..0043d50e912353a7372481b5c82c12c07db8b4f1 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -977,6 +977,11 @@ public final class CraftServer implements Server {
+@@ -978,6 +978,11 @@ public final class CraftServer implements Server {
          Preconditions.checkArgument(rawSender != null, "sender cannot be null");
          Preconditions.checkArgument(commandLine != null, "commandLine cannot be null");
          org.spigotmc.AsyncCatcher.catchOp("Command Dispatched Async: " + commandLine); // Spigot // Paper - Include command in error message
@@ -19,4 +19,4 @@ index bfdf63b42ccfb6728fb99fa7ba45ee413b86d77a..961a933046fba252fe2e4d691ae16deb
 +        // Nabulus end
          CommandSourceStack sourceStack = VanillaCommandWrapper.getListener(rawSender);
  
-         net.minecraft.commands.Commands commands = this.getHandle().getServer().getCommands();
+         String command = StringUtils.normalizeSpace(commandLine.trim());

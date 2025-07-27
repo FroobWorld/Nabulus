@@ -18,7 +18,7 @@ index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35
          final List<ServerPlayer> players = playersTemp;
          // CraftBukkit end
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index cc127ad70c6b84fd68879f9c226d09c42e45b532..00d9aed8eb50ec1b4b91312a0bec0bbc8135364e 100644
+index 7f18ea0c124410e255f9c2ac252f4a7a38fce787..810590b0b8e1aef7a37562f50b94fccdbfff2a2d 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
 @@ -350,7 +350,7 @@ public abstract class PlayerList {
@@ -39,7 +39,7 @@ index cc127ad70c6b84fd68879f9c226d09c42e45b532..00d9aed8eb50ec1b4b91312a0bec0bbc
                  }
  
                  onlinePlayers.add(entityplayer1); // Paper - Use single player info update packet on join
-@@ -597,6 +597,7 @@ public abstract class PlayerList {
+@@ -595,6 +595,7 @@ public abstract class PlayerList {
              if (otherPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
                  otherPlayer.connection.send(packet);
              } else {

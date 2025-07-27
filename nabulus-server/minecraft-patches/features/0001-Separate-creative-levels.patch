@@ -46,10 +46,10 @@ index 7015d97cb5b97d59ca41f63ba23da1edfb6bae0a..98999e673ba29329948cbba8838fc1f6
                  return null;
              }
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index f3eca351021c37b64315872d075bd0a84aeee267..717149111280ac10f009d565dff8e26e0cb722b0 100644
+index 8f94c963f2c59668d72d162f46f7505d6a6b06a5..a55fb175cc64674f8d8a395c2cee2c5e57eefab5 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -745,6 +745,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -679,6 +679,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          }
          this.setLevel(level);
          this.gameMode.setLevel(level);
@@ -57,7 +57,7 @@ index f3eca351021c37b64315872d075bd0a84aeee267..717149111280ac10f009d565dff8e26e
      }
      // CraftBukkit end
  
-@@ -1492,6 +1493,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1439,6 +1440,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
                  this.unsetRemoved();
                  // CraftBukkit end
                  this.setServerLevel(level);
@@ -65,7 +65,7 @@ index f3eca351021c37b64315872d075bd0a84aeee267..717149111280ac10f009d565dff8e26e
                  this.connection.internalTeleport(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives()); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  level.addDuringTeleport(this);
-@@ -2071,10 +2073,20 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2018,10 +2020,20 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
      }
  
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
@@ -86,7 +86,7 @@ index f3eca351021c37b64315872d075bd0a84aeee267..717149111280ac10f009d565dff8e26e
          if (keepEverything) {
              this.getAttributes().assignBaseValues(that.getAttributes());
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
-@@ -2113,6 +2125,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2060,6 +2072,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.chunkTrackingView = that.chunkTrackingView;
@@ -95,10 +95,10 @@ index f3eca351021c37b64315872d075bd0a84aeee267..717149111280ac10f009d565dff8e26e
          this.setShoulderEntityRight(that.getShoulderEntityRight());
          this.setLastDeathLocation(that.getLastDeathLocation());
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index b1524279c02cd3be82338a6bd0320cb125a134d5..cc127ad70c6b84fd68879f9c226d09c42e45b532 100644
+index e1fd699b33832c0f01b14023db7cc2b9d6797227..7f18ea0c124410e255f9c2ac252f4a7a38fce787 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -720,8 +720,27 @@ public abstract class PlayerList {
+@@ -685,8 +685,27 @@ public abstract class PlayerList {
          Level fromWorld = player.level();
          player.wonGame = false;
          // CraftBukkit end
@@ -127,7 +127,7 @@ index b1524279c02cd3be82338a6bd0320cb125a134d5..cc127ad70c6b84fd68879f9c226d09c4
          serverPlayer.setId(player.getId());
          serverPlayer.setMainArm(player.getMainArm());
          // CraftBukkit - not required, just copies old location into reused entity
-@@ -734,11 +753,13 @@ public abstract class PlayerList {
+@@ -699,11 +718,13 @@ public abstract class PlayerList {
          }
          // Paper start - Add PlayerPostRespawnEvent
          boolean isBedSpawn = false;
@@ -142,7 +142,7 @@ index b1524279c02cd3be82338a6bd0320cb125a134d5..cc127ad70c6b84fd68879f9c226d09c4
          TeleportTransition teleportTransition;
          if (location == null) {
              teleportTransition = player.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, eventReason);
-@@ -752,6 +773,8 @@ public abstract class PlayerList {
+@@ -717,6 +738,8 @@ public abstract class PlayerList {
          } else {
              teleportTransition = new TeleportTransition(((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle(), org.bukkit.craftbukkit.util.CraftLocation.toVec3(location), Vec3.ZERO, location.getYaw(), location.getPitch(), TeleportTransition.DO_NOTHING);
          }
@@ -152,10 +152,10 @@ index b1524279c02cd3be82338a6bd0320cb125a134d5..cc127ad70c6b84fd68879f9c226d09c4
          if (teleportTransition == null) { // Paper - Add PlayerPostRespawnEvent - diff on change - spigot early returns if respawn pos is null, that is how they handle disconnected player in respawn event
              return player;
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 81413ac0de7b3c7a72bc606fe5ae6fb4ae7055e3..4cde2786b4fda49b09e49259d110f7a1d594bf66 100644
+index dbf498e194b6af248ecdf06da697cfa42da467ff..2674d5945cbad680f341a67f3d31af40a561f55e 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -3917,6 +3917,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -3916,6 +3916,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          }
          // Paper end - Fix item duplication and teleport issues
          if (this.level() instanceof ServerLevel serverLevel && !this.isRemoved()) {
@@ -184,7 +184,7 @@ index 88b07fbb96b20124777889830afa480673629d43..15135544bd6916bc61d7e17ecee23690
      }
  
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 20687b632f2cc3f25c8f04e34cc1f6f1d0abf741..6750bbe424a66aab56749bb1f588202da7a77204 100644
+index 8f4c45fbea2d7c1317aff36031bb834b07b23a82..3957be2e4577966422a189e578fa180e9bfb5d3d 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
 @@ -224,6 +224,36 @@ public abstract class Player extends LivingEntity {
