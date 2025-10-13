@@ -5,10 +5,10 @@ Subject: [PATCH] Throttle spawn attempts after consistent failures
 
 
 diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
-index 14a2514a408a66a83f7b5fb43b4c4dc8f23fd5f4..cacd4fc5d67b5c231160c88fade5965fe92754ac 100644
+index 6198d6d4952088f1fef28e84f65f22e702b4435d..6e49d23bc2bcef749473d61a7ca63f9e7170c0e8 100644
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -156,6 +156,11 @@ public final class NaturalSpawner {
+@@ -158,6 +158,11 @@ public final class NaturalSpawner {
          profilerFiller.push("spawner");
  
          for (MobCategory mobCategory : categories) {
@@ -20,7 +20,7 @@ index 14a2514a408a66a83f7b5fb43b4c4dc8f23fd5f4..cacd4fc5d67b5c231160c88fade5965f
              // Paper start - Optional per player mob spawns
              final boolean canSpawn;
              int maxSpawns = Integer.MAX_VALUE;
-@@ -184,8 +189,17 @@ public final class NaturalSpawner {
+@@ -186,8 +191,17 @@ public final class NaturalSpawner {
                  canSpawn = spawnState.canSpawnForCategoryLocal(mobCategory, chunk.getPos());
              }
              if (canSpawn) {
@@ -39,7 +39,7 @@ index 14a2514a408a66a83f7b5fb43b4c4dc8f23fd5f4..cacd4fc5d67b5c231160c88fade5965f
                  // Paper end - Optional per player mob spawns
              }
          }
-@@ -581,6 +595,7 @@ public final class NaturalSpawner {
+@@ -587,6 +601,7 @@ public final class NaturalSpawner {
          @Nullable
          private EntityType<?> lastCheckedType;
          private double lastCharge;
@@ -48,10 +48,10 @@ index 14a2514a408a66a83f7b5fb43b4c4dc8f23fd5f4..cacd4fc5d67b5c231160c88fade5965f
          SpawnState(
              int spawnableChunkCount,
 diff --git a/net/minecraft/world/level/chunk/LevelChunk.java b/net/minecraft/world/level/chunk/LevelChunk.java
-index 75578e6ed7233a03d9b6cd3c6d3997f1c6148392..24602770533aafa93fe0a1172ee20db2ee426793 100644
+index 4dcec2e8a3120a3dfa078e8cf6857ba99ca01a2d..ed730bde2a155c4d6a049fa9a9956d518552bfc9 100644
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -87,6 +87,7 @@ public class LevelChunk extends ChunkAccess implements ca.spottedleaf.moonrise.p
+@@ -94,6 +94,7 @@ public class LevelChunk extends ChunkAccess implements DebugValueSource, ca.spot
      private final Int2ObjectMap<GameEventListenerRegistry> gameEventListenerRegistrySections;
      private final LevelChunkTicks<Block> blockTicks;
      private final LevelChunkTicks<Fluid> fluidTicks;

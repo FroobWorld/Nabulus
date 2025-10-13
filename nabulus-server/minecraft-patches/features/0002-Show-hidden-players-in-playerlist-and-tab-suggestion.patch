@@ -4,8 +4,21 @@ Date: Tue, 1 Mar 2022 19:44:48 +0930
 Subject: [PATCH] Show hidden players in playerlist and tab suggestions
 
 
+diff --git a/net/minecraft/commands/CommandSourceStack.java b/net/minecraft/commands/CommandSourceStack.java
+index 6ead209287ab021b8245fa5c3b7f18ca7d9c66b3..8dd4c5afdab3f71c21b3b765a09a1b90f870c871 100644
+--- a/net/minecraft/commands/CommandSourceStack.java
++++ b/net/minecraft/commands/CommandSourceStack.java
+@@ -580,7 +580,7 @@ public class CommandSourceStack implements ExecutionCommandSource<CommandSourceS
+ 
+     @Override
+     public Collection<String> getOnlinePlayerNames() {
+-        return this.entity instanceof ServerPlayer sourcePlayer && !sourcePlayer.getBukkitEntity().hasPermission("paper.bypass-visibility.tab-completion") ? this.getServer().getPlayerList().getPlayers().stream().filter(serverPlayer -> sourcePlayer.getBukkitEntity().canSee(serverPlayer.getBukkitEntity())).map(serverPlayer -> serverPlayer.getGameProfile().name()).toList() : Lists.newArrayList(this.server.getPlayerNames()); // Paper - Make CommandSourceStack respect hidden players
++        return this.entity instanceof ServerPlayer sourcePlayer && !sourcePlayer.getBukkitEntity().hasPermission("paper.bypass-visibility.tab-completion") ? this.getServer().getPlayerList().getPlayers().stream().filter(serverPlayer -> true || sourcePlayer.getBukkitEntity().canSee(serverPlayer.getBukkitEntity())).map(serverPlayer -> serverPlayer.getGameProfile().name()).toList() : Lists.newArrayList(this.server.getPlayerNames()); // Paper - Make CommandSourceStack respect hidden players // Nabulus - don't make it respect hidden players
+     }
+ 
+     @Override
 diff --git a/net/minecraft/server/commands/ListPlayersCommand.java b/net/minecraft/server/commands/ListPlayersCommand.java
-index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35bfc4170d 100644
+index e7c778a7f292fd0749cbd5e6586ad1b93ac7f29e..dac56a9c4e3ccacc0178878897e0a36b04138213 100644
 --- a/net/minecraft/server/commands/ListPlayersCommand.java
 +++ b/net/minecraft/server/commands/ListPlayersCommand.java
 @@ -36,7 +36,7 @@ public class ListPlayersCommand {
@@ -18,28 +31,28 @@ index c6ae34f91b3629990294fc5e69237a1e600ef038..eef9e2be7be153a3537df3602c53df35
          final List<ServerPlayer> players = playersTemp;
          // CraftBukkit end
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index 7f18ea0c124410e255f9c2ac252f4a7a38fce787..810590b0b8e1aef7a37562f50b94fccdbfff2a2d 100644
+index a07568d90380f572a9eae68bc3fc1a60a9f69565..1e77e0904d3625db5a4092818d96aa7fe40a5875 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -350,7 +350,7 @@ public abstract class PlayerList {
-             for (int i = 0; i < this.players.size(); ++i) {
-                 ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);
+@@ -253,7 +253,7 @@ public abstract class PlayerList {
+         for (int i = 0; i < this.players.size(); ++i) {
+             ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);
  
--                if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
+-            if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
 +                if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer) || true) { // Nabulus
-                     // Paper start - Add Listing API for Player
-                     if (entityplayer1.getBukkitEntity().isListed(bukkitPlayer)) {
-                         // Paper end - Add Listing API for Player
-@@ -363,7 +363,7 @@ public abstract class PlayerList {
-                 }
+                 // Paper start - Add Listing API for Player
+                 if (entityplayer1.getBukkitEntity().isListed(bukkitPlayer)) {
+                     // Paper end - Add Listing API for Player
+@@ -266,7 +266,7 @@ public abstract class PlayerList {
+             }
  
-                 if (entityplayer1 == player || !bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) { // Paper - Use single player info update packet on join; Don't include joining player
--                    continue;
+             if (entityplayer1 == player || !bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) { // Paper - Use single player info update packet on join; Don't include joining player
+-                continue;
 +                    //continue; // Nabulus
-                 }
+             }
  
-                 onlinePlayers.add(entityplayer1); // Paper - Use single player info update packet on join
-@@ -595,6 +595,7 @@ public abstract class PlayerList {
+             onlinePlayers.add(entityplayer1); // Paper - Use single player info update packet on join
+@@ -512,6 +512,7 @@ public abstract class PlayerList {
              if (otherPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
                  otherPlayer.connection.send(packet);
              } else {

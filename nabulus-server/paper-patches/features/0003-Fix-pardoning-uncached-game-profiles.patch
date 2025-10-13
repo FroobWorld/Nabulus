@@ -5,7 +5,7 @@ Subject: [PATCH] Fix pardoning uncached game profiles
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java b/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
-index 80c879a379ad122102608b503a3da49c129267cf..4d79bf3c2ba9d49ec1988bea9299901c658de702 100644
+index 89ad99df2f76537bdcb0482f2046e1215c104ded..19efeda7debaddf424be659f84d84dd875bfda19 100644
 --- a/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
 +++ b/src/main/java/org/bukkit/craftbukkit/ban/CraftProfileBanList.java
 @@ -155,6 +155,19 @@ public class CraftProfileBanList implements ProfileBanList {
@@ -14,10 +14,10 @@ index 80c879a379ad122102608b503a3da49c129267cf..4d79bf3c2ba9d49ec1988bea9299901c
  
 +        // Nabulus start
 +        if (CraftProfileBanList.getProfile(target) == null) {
-+            java.util.List<GameProfile> toPardon = new java.util.ArrayList<>();
++            java.util.List<NameAndId> toPardon = new java.util.ArrayList<>();
 +            for (UserBanListEntry banListEntry : list.getEntries()) {
-+                if (banListEntry == null || banListEntry.getUser() == null || banListEntry.getUser().getId() == null) continue;
-+                if (banListEntry.getUser().getId().toString().equalsIgnoreCase(target)) {
++                if (banListEntry == null || banListEntry.getUser() == null) continue;
++                if (banListEntry.getUser().id().toString().equalsIgnoreCase(target)) {
 +                    toPardon.add(banListEntry.getUser());
 +                }
 +            }
