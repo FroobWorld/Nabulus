@@ -184,7 +184,7 @@ index 88b07fbb96b20124777889830afa480673629d43..15135544bd6916bc61d7e17ecee23690
      }
  
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 14e8332cd07ebbd474015ad50abb191f4ad43b18..786ae1aaaf490809f46c2b19bc469a529a7ee043 100644
+index 14e8332cd07ebbd474015ad50abb191f4ad43b18..3f4e3da838bc52027d6eda6c4a8240ebc25c9a6a 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
 @@ -185,6 +185,36 @@ public abstract class Player extends Avatar implements ContainerUser {
@@ -224,7 +224,7 @@ index 14e8332cd07ebbd474015ad50abb191f4ad43b18..786ae1aaaf490809f46c2b19bc469a52
      @Override
      public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
          return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
-@@ -673,6 +703,13 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -673,6 +703,14 @@ public abstract class Player extends Avatar implements ContainerUser {
          this.setUUID(this.gameProfile.id());
          this.inventory.load(input.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
          this.inventory.setSelectedSlot(input.getIntOr("SelectedItemSlot", 0));
@@ -234,11 +234,12 @@ index 14e8332cd07ebbd474015ad50abb191f4ad43b18..786ae1aaaf490809f46c2b19bc469a52
 +        this.creativeLevelInventory.setSelectedSlot(input.getIntOr("Nabulus.CreativeLevelSelectedItemSlot", 0));
 +        this.creativeLevelInventory.equipment.setAll(input.read("Nabulus.CreativeLevelEquipment", EntityEquipment.CODEC).orElseGet(EntityEquipment::new));
 +        this.usingNormalInventory = true;
++        chooseInventory();
 +        // Nabulus end
          this.sleepCounter = input.getShortOr("SleepTimer", (short)0);
          this.experienceProgress = input.getFloatOr("XpP", 0.0F);
          this.experienceLevel = input.getIntOr("XpLevel", 0);
-@@ -695,10 +732,24 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -695,10 +733,24 @@ public abstract class Player extends Avatar implements ContainerUser {
  
      @Override
      protected void addAdditionalSaveData(ValueOutput output) {
