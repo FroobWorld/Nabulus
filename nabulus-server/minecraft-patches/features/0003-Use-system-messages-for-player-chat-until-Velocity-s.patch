@@ -6,14 +6,14 @@ Subject: [PATCH] Use system messages for player chat until Velocity support
 
 
 diff --git a/net/minecraft/network/chat/OutgoingChatMessage.java b/net/minecraft/network/chat/OutgoingChatMessage.java
-index 4635182c73f28f63ba84982cb6bcb422221b738e..19d87c84ebd788ff6ed09dfd1b45ddc8a9f8be64 100644
+index 30b26c6def2f6cb8d742ae3eeb9a7c2cd672991c..e9fceb53da485e61e01f707316378cfbc36870b1 100644
 --- a/net/minecraft/network/chat/OutgoingChatMessage.java
 +++ b/net/minecraft/network/chat/OutgoingChatMessage.java
-@@ -27,6 +27,7 @@ public interface OutgoingChatMessage {
-         }
-         public void sendToPlayer(ServerPlayer player, boolean filtered, ChatType.Bound boundType, @javax.annotation.Nullable Component unsigned) {
-             player.connection.sendDisguisedChatMessage(unsigned != null ? unsigned : this.content, boundType);
-+            player.connection.sendDisguisedChatMessage(this.content, boundType); // Nabulus
+@@ -28,6 +28,7 @@ public interface OutgoingChatMessage {
+         @Override
+         public void sendToPlayer(ServerPlayer player, boolean filtered, ChatType.Bound boundChatType, @javax.annotation.Nullable Component unsigned) {
+             player.connection.sendDisguisedChatMessage(unsigned != null ? unsigned : this.content, boundChatType);
++            player.connection.sendDisguisedChatMessage(this.content, boundChatType); // Nabulus
              // Paper end
          }
      }

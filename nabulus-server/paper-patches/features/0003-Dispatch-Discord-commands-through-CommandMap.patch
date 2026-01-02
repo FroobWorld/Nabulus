@@ -5,10 +5,10 @@ Subject: [PATCH] Dispatch Discord commands through CommandMap
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 3187d470e62da15e8a1f60fc1bd4ee213bf2f69d..b59727fb69c0454fd12a99dc0d7c369eee180544 100644
+index b2961752b50e98d95adf3af4f658e2fdb2127d43..614a585cf7383ac1db381d3a9010e753fdb508cb 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -925,6 +925,11 @@ public final class CraftServer implements Server {
+@@ -924,6 +924,11 @@ public final class CraftServer implements Server {
          Preconditions.checkArgument(rawSender != null, "sender cannot be null");
          Preconditions.checkArgument(commandLine != null, "commandLine cannot be null");
          org.spigotmc.AsyncCatcher.catchOp("Command Dispatched Async: " + commandLine); // Spigot // Paper - Include command in error message

@@ -5,10 +5,10 @@ Subject: [PATCH] Show hidden players in playerlist and tab suggestions
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 975bc2bf7c19208a524cbd828e66c8eb60953aca..4244b6fb822e99bf5b7da63d4fdf6168886d5b6e 100644
+index e3c9327de894fdfb252781772817f4c8bc079cce..3f997b730abbc927b5c31dada213a593b1e43985 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -547,7 +547,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -557,7 +557,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          getHandle().listName = name == null ? null : io.papermc.paper.adventure.PaperAdventure.asVanilla(name);
          if (getHandle().connection == null) return; // Updates are possible before the player has fully joined
          for (ServerPlayer player : server.getHandle().players) {
@@ -17,7 +17,7 @@ index 975bc2bf7c19208a524cbd828e66c8eb60953aca..4244b6fb822e99bf5b7da63d4fdf6168
                  player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
              }
          }
-@@ -578,7 +578,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -588,7 +588,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          this.getHandle().listName = name.equals(this.getName()) ? null : CraftChatMessage.fromStringOrNull(name);
          if (this.getHandle().connection == null) return; // Paper - Updates are possible before the player has fully joined
          for (ServerPlayer player : this.server.getHandle().players) {
@@ -26,7 +26,7 @@ index 975bc2bf7c19208a524cbd828e66c8eb60953aca..4244b6fb822e99bf5b7da63d4fdf6168
                  player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this.getHandle()));
              }
          }
-@@ -1972,11 +1972,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -1877,11 +1877,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          // Remove this entity from the hidden player's EntityTrackerEntry
          // Paper start
          Entity other = ((CraftEntity) entity).getHandle();
@@ -44,12 +44,12 @@ index 975bc2bf7c19208a524cbd828e66c8eb60953aca..4244b6fb822e99bf5b7da63d4fdf6168
          // Paper end
          ChunkMap tracker = ((ServerLevel) this.getHandle().level()).getChunkSource().chunkMap;
          ChunkMap.TrackedEntity entry = tracker.entityMap.get(other.getId());
-@@ -1985,7 +1990,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -1890,7 +1895,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          }
  
          // Remove the hidden entity from this player user list, if they're on it
 -        if (other instanceof ServerPlayer) {
 +        if (other instanceof ServerPlayer && removeFromPlayerList) { // Nabulus
              ServerPlayer otherPlayer = (ServerPlayer) other;
-             if (otherPlayer.sentListPacket) {
+             if (this.getHandle().sentListPacket && otherPlayer.sentListPacket) {
                  this.getHandle().connection.send(new ClientboundPlayerInfoRemovePacket(List.of(otherPlayer.getUUID())));
