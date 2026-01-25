@@ -5,25 +5,25 @@ Subject: [PATCH] Add silent chest flag to players
 
 
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 90483699b3f2efe9945c849adfdd38422e3a3458..20e353108830666ed707bbe78f0ab940ccccc115 100644
+index 6f49b5e5888a6296b929e465a5ef87dc49bd4516..a67c766b13d707dd8da023adacf0976bc4b8e86a 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -287,6 +287,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
-     public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
+@@ -291,6 +291,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
+     public int invulnerableDuration = LivingEntity.INVULNERABLE_DURATION; // Paper - configurable invulnerable duration
      // CraftBukkit end
 +    public boolean silentChests = false; // Nabulus
  
-     protected LivingEntity(EntityType<? extends LivingEntity> entityType, Level level) {
-         super(entityType, level);
+     protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
+         super(type, level);
 diff --git a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-index 03c6c7b28c1903bc1ccbcebf478528db98a1a510..5f72c6746e641da141c43c29d4fbf047eb80b646 100644
+index 4f3b6a32fe4e791aab05aa9e553ec935e3cd5e6b..a3c921042ebfc0760f09a33ff1dfc409aeef48a0 100644
 --- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 +++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 @@ -40,6 +40,7 @@ public abstract class ContainerOpenersCounter {
      public abstract boolean isOwnContainer(Player player);
  
-     public void incrementOpeners(LivingEntity entity, Level level, BlockPos pos, BlockState state, double maxInteractionRange) {
+     public void incrementOpeners(LivingEntity entity, Level level, BlockPos pos, BlockState state, double interactionRange) {
 +        if (entity.silentChests) return; // Nabulus
          int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
          int i = this.openCount++;
@@ -46,10 +46,10 @@ index 03c6c7b28c1903bc1ccbcebf478528db98a1a510..5f72c6746e641da141c43c29d4fbf047
              .map(entity -> (ContainerUser)entity)
              .collect(Collectors.toList());
 diff --git a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-index e2a2811464ff7455e513944b7565f9f226a5ed34..4b2a3339bedcf526adb382552d260bf0ad20337f 100644
+index 61b99c895c0e248f0e7c4c634644dcff54a964d9..4ff769502875277965390f7385bf28d3384899e8 100644
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -202,7 +202,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -201,7 +201,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void startOpen(ContainerUser user) {
@@ -58,7 +58,7 @@ index e2a2811464ff7455e513944b7565f9f226a5ed34..4b2a3339bedcf526adb382552d260bf0
              if (this.openCount < 0) {
                  this.openCount = 0;
              }
-@@ -220,7 +220,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -219,7 +219,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
      public void stopOpen(ContainerUser user) {

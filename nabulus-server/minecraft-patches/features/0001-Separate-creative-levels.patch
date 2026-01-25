@@ -46,10 +46,10 @@ index 7015d97cb5b97d59ca41f63ba23da1edfb6bae0a..98999e673ba29329948cbba8838fc1f6
                  return null;
              }
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index fdf031e2dd5088cc1f4ab7dbc13ab86d0be6f9b2..67eb887699668938cb7fb489e0e529bd5b77fecb 100644
+index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..8bb626090ad7da59a102cfe6b39fe56476ef09a2 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -656,6 +656,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -647,6 +647,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          }
          this.setLevel(level);
          this.gameMode.setLevel(level);
@@ -57,15 +57,29 @@ index fdf031e2dd5088cc1f4ab7dbc13ab86d0be6f9b2..67eb887699668938cb7fb489e0e529bd
      }
      // CraftBukkit end
  
-@@ -1550,6 +1551,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
-                 this.unsetRemoved();
-                 // CraftBukkit end
+@@ -1479,6 +1480,13 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+                 this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
+             }
+ 
++            // Nabulus start
++            boolean toOrFromCreativeLevel = ((net.minecraft.world.level.storage.PrimaryLevelData) teleportTransition.newLevel().levelData).creativeLevel || ((net.minecraft.world.level.storage.PrimaryLevelData) this.level().levelData).creativeLevel;
++            if (toOrFromCreativeLevel) {
++                this.releaseLeftShoulderEntity();
++                this.releaseRightShoulderEntity();
++            }
++            // Nabulus end
+             ServerLevel level = teleportTransition.newLevel();
+             ServerLevel serverLevel = this.level();
+             // CraftBukkit start
+@@ -1545,6 +1553,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+                 profilerFiller.pop();
+                 profilerFiller.push("placing");
                  this.setServerLevel(level);
 +                this.chooseInventory(); // Nabulus
                  this.connection.internalTeleport(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives()); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  level.addDuringTeleport(this);
-@@ -2132,10 +2134,20 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2147,11 +2156,21 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
      }
  
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
@@ -78,15 +92,16 @@ index fdf031e2dd5088cc1f4ab7dbc13ab86d0be6f9b2..67eb887699668938cb7fb489e0e529bd
          this.chatSession = that.chatSession;
          this.gameMode.setGameModeForPlayer(that.gameMode.getGameModeForPlayer(), that.gameMode.getPreviousGameModeForPlayer());
          this.onUpdateAbilities();
+         this.getAttributes().assignBaseValues(that.getAttributes());
 +        // Nabulus start
 +        this.normalInventory.replaceWith(that.normalInventory);
 +        this.creativeLevelInventory.replaceWith(that.creativeLevelInventory);
 +        this.usingNormalInventory = that.usingNormalInventory;
 +        // Nabulus end
          if (keepEverything) {
-             this.getAttributes().assignBaseValues(that.getAttributes());
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
-@@ -2174,6 +2186,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+             this.setHealth(that.getHealth());
+@@ -2180,6 +2199,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.chunkTrackingView = that.chunkTrackingView;
@@ -95,67 +110,36 @@ index fdf031e2dd5088cc1f4ab7dbc13ab86d0be6f9b2..67eb887699668938cb7fb489e0e529bd
          this.setShoulderEntityLeft(that.getShoulderEntityLeft());
          this.setShoulderEntityRight(that.getShoulderEntityRight());
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index 9d7be1695f797c2c041d21a8326aeea46b0488d7..a07568d90380f572a9eae68bc3fc1a60a9f69565 100644
+index 989ac565c47a70c7947cb7315d0f5c2cfecd0363..e2bf5724bd606eccd021016c5cd872371ddcdc20 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -602,8 +602,27 @@ public abstract class PlayerList {
-         Level fromWorld = player.level();
-         player.wonGame = false;
-         // CraftBukkit end
-+        // Nabulus start - moved from below
-+        boolean isRespawn = false;
-+        TeleportTransition teleportTransition;
-+        if (location == null) {
-+            teleportTransition = player.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, eventReason);
-+
-+            if (!keepInventory) player.reset(); // SPIGOT-4785
-+            isRespawn = true;
-+        } else {
-+            teleportTransition = new TeleportTransition(((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle(), org.bukkit.craftbukkit.util.CraftLocation.toVec3(location), Vec3.ZERO, location.getYaw(), location.getPitch(), TeleportTransition.DO_NOTHING);
-+        }
-+        // Nabulus end
+@@ -601,13 +601,20 @@ public abstract class PlayerList {
+         TeleportTransition teleportTransition = result.transition();
+         Level fromLevel = player.level();
+         // Paper end - respawn event
 +        // Nabulus start
 +        boolean toOrFromCreativeLevel = ((net.minecraft.world.level.storage.PrimaryLevelData) teleportTransition.newLevel().levelData).creativeLevel || ((net.minecraft.world.level.storage.PrimaryLevelData) player.level().levelData).creativeLevel;
 +        if (toOrFromCreativeLevel) {
-+            serverPlayer.releaseLeftShoulderEntity();
-+            serverPlayer.releaseRightShoulderEntity();
++            player.releaseLeftShoulderEntity();
++            player.releaseRightShoulderEntity();
 +        }
 +        // Nabulus end
+         this.players.remove(player);
+         this.playersByName.remove(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Paper
+         player.level().removePlayerImmediately(player, reason);
+         ServerLevel level = teleportTransition.newLevel();
+         ServerPlayer serverPlayer = player; // Paper - TODO - recreate instance
          serverPlayer.connection = player.connection;
 -        serverPlayer.restoreFrom(player, keepInventory);
 +        serverPlayer.restoreFrom(player, keepInventory, toOrFromCreativeLevel); // Nabulus
          serverPlayer.setId(player.getId());
          serverPlayer.setMainArm(player.getMainArm());
-         // CraftBukkit - not required, just copies old location into reused entity
-@@ -616,11 +635,13 @@ public abstract class PlayerList {
-         }
-         // Paper start - Add PlayerPostRespawnEvent
-         boolean isBedSpawn = false;
--        boolean isRespawn = false;
-+        //boolean isRespawn = false; // Nabulus - moved up
-         boolean isAnchorSpawn = false;
-         // Paper end - Add PlayerPostRespawnEvent
- 
-         // CraftBukkit start - fire PlayerRespawnEvent
-+        // Nabulus start - moved up
-+        /*
-         TeleportTransition teleportTransition;
-         if (location == null) {
-             teleportTransition = player.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, eventReason);
-@@ -634,6 +655,8 @@ public abstract class PlayerList {
-         } else {
-             teleportTransition = new TeleportTransition(((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle(), org.bukkit.craftbukkit.util.CraftLocation.toVec3(location), Vec3.ZERO, location.getYaw(), location.getPitch(), TeleportTransition.DO_NOTHING);
-         }
-+        */
-+        // Nabulus end
-         // Spigot start
-         if (teleportTransition == null) { // Paper - Add PlayerPostRespawnEvent - diff on change - spigot early returns if respawn pos is null, that is how they handle disconnected player in respawn event
-             return player;
+         if (false && !teleportTransition.missingRespawnBlock()) { // Paper - Once we not reuse the player entity, this can be flipped again but without the events being fired
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index fe4128c66b70672b4aa29c85c7d033f55b1e794c..56f954fb4b6b593a15464beb07704c7f6b64a768 100644
+index 21d0de44d9055a5e80c551402abdb7e352dcb0c9..ba63f48654e5c599ad752067e8aa71233e7301db 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -3987,6 +3987,11 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -4000,6 +4000,11 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
          }
          // Paper end - Fix item duplication and teleport issues
          if (this.level() instanceof ServerLevel serverLevel && !this.isRemoved()) {
@@ -168,13 +152,13 @@ index fe4128c66b70672b4aa29c85c7d033f55b1e794c..56f954fb4b6b593a15464beb07704c7f
              PositionMoveRotation absolutePosition = PositionMoveRotation.calculateAbsolute(PositionMoveRotation.of(this), PositionMoveRotation.of(teleportTransition), teleportTransition.relatives());
              Vec3 velocity = absolutePosition.deltaMovement(); // Paper
 diff --git a/net/minecraft/world/entity/PortalProcessor.java b/net/minecraft/world/entity/PortalProcessor.java
-index 88b07fbb96b20124777889830afa480673629d43..15135544bd6916bc61d7e17ecee2369026820379 100644
+index 4e69e32ad000b8c02e44c3ffce24ff5e3c090a2f..cb0ffb5e2be2bd2d4e850f9dd8af7d91890167b3 100644
 --- a/net/minecraft/world/entity/PortalProcessor.java
 +++ b/net/minecraft/world/entity/PortalProcessor.java
-@@ -30,6 +30,11 @@ public class PortalProcessor {
+@@ -29,6 +29,11 @@ public class PortalProcessor {
+     }
  
-     @Nullable
-     public TeleportTransition getPortalDestination(ServerLevel level, Entity entity) {
+     public @Nullable TeleportTransition getPortalDestination(ServerLevel level, Entity entity) {
 +        // Nabulus start
 +        if (((net.minecraft.world.level.storage.PrimaryLevelData) entity.level().levelData).creativeLevel) {
 +            return null;
@@ -184,10 +168,10 @@ index 88b07fbb96b20124777889830afa480673629d43..15135544bd6916bc61d7e17ecee23690
      }
  
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 14e8332cd07ebbd474015ad50abb191f4ad43b18..3f4e3da838bc52027d6eda6c4a8240ebc25c9a6a 100644
+index 7bf160cef8bd772d27d4a71f04d5d9861ef67984..33f5954591b0ccff532e420f02471b5c0f4f74da 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -185,6 +185,36 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -184,6 +184,36 @@ public abstract class Player extends Avatar implements ContainerUser {
      public boolean fauxSleeping;
      public int oldLevel = -1;
  
@@ -224,7 +208,7 @@ index 14e8332cd07ebbd474015ad50abb191f4ad43b18..3f4e3da838bc52027d6eda6c4a8240eb
      @Override
      public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
          return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
-@@ -673,6 +703,14 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -669,6 +699,14 @@ public abstract class Player extends Avatar implements ContainerUser {
          this.setUUID(this.gameProfile.id());
          this.inventory.load(input.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
          this.inventory.setSelectedSlot(input.getIntOr("SelectedItemSlot", 0));
@@ -239,7 +223,7 @@ index 14e8332cd07ebbd474015ad50abb191f4ad43b18..3f4e3da838bc52027d6eda6c4a8240eb
          this.sleepCounter = input.getShortOr("SleepTimer", (short)0);
          this.experienceProgress = input.getFloatOr("XpP", 0.0F);
          this.experienceLevel = input.getIntOr("XpLevel", 0);
-@@ -695,10 +733,24 @@ public abstract class Player extends Avatar implements ContainerUser {
+@@ -691,10 +729,24 @@ public abstract class Player extends Avatar implements ContainerUser {
  
      @Override
      protected void addAdditionalSaveData(ValueOutput output) {
@@ -265,10 +249,10 @@ index 14e8332cd07ebbd474015ad50abb191f4ad43b18..3f4e3da838bc52027d6eda6c4a8240eb
          output.putFloat("XpP", this.experienceProgress);
          output.putInt("XpLevel", this.experienceLevel);
 diff --git a/net/minecraft/world/level/storage/LevelStorageSource.java b/net/minecraft/world/level/storage/LevelStorageSource.java
-index 3b40822ea6ec9783fe3cb8eaba069a8d626d8382..55f9a938a3f840485d8326d274cac7ae74cfd608 100644
+index 140630186c3b0324c248cc2a2f31d3b906557b9c..7d76ad1dca83d1be71f0c5bb32b726639b260c07 100644
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -146,6 +146,7 @@ public class LevelStorageSource {
+@@ -143,6 +143,7 @@ public class LevelStorageSource {
              dynamic, levelSettings, complete.specialWorldProperty(), worldGenSettings.options(), lifecycle
          );
          primaryLevelData.pdc = (Tag) dynamic.getElement("BukkitValues", null); // CraftBukkit - Add PDC to world
@@ -277,10 +261,10 @@ index 3b40822ea6ec9783fe3cb8eaba069a8d626d8382..55f9a938a3f840485d8326d274cac7ae
      }
  
 diff --git a/net/minecraft/world/level/storage/PrimaryLevelData.java b/net/minecraft/world/level/storage/PrimaryLevelData.java
-index d4cc4691582c4e2c52e60f73254509a2ab2f45a0..56b1be83107319c6c61f51abd6aebae36304d253 100644
+index 8936b4b1ae9c82eed2a7d3191a29f01792438d14..d136a99d0ffd8a0aab364dec9e7a9083b7fb5f99 100644
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -80,6 +80,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+@@ -77,6 +77,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
      public net.minecraft.core.Registry<net.minecraft.world.level.dimension.LevelStem> customDimensions;
      private net.minecraft.server.level.ServerLevel world;
      protected net.minecraft.nbt.Tag pdc;
@@ -288,11 +272,11 @@ index d4cc4691582c4e2c52e60f73254509a2ab2f45a0..56b1be83107319c6c61f51abd6aebae3
  
      public void setWorld(net.minecraft.server.level.ServerLevel world) {
          if (this.world != null) {
-@@ -296,6 +297,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
-         nbt.storeNullable("WanderingTraderId", UUIDUtil.CODEC, this.wanderingTraderId);
-         nbt.putString("Bukkit.Version", org.bukkit.Bukkit.getName() + "/" + org.bukkit.Bukkit.getVersion() + "/" + org.bukkit.Bukkit.getBukkitVersion()); // CraftBukkit
-         this.world.getWorld().storeBukkitValues(nbt); // CraftBukkit - add pdc
-+        nbt.putBoolean("Nabulus.CreativeLevel", this.creativeLevel); // Nabulus
+@@ -293,6 +294,7 @@ public class PrimaryLevelData implements ServerLevelData, WorldData {
+         tag.storeNullable("WanderingTraderId", UUIDUtil.CODEC, this.wanderingTraderId);
+         tag.putString("Bukkit.Version", org.bukkit.Bukkit.getName() + "/" + org.bukkit.Bukkit.getVersion() + "/" + org.bukkit.Bukkit.getBukkitVersion()); // CraftBukkit
+         this.world.getWorld().storeBukkitValues(tag); // CraftBukkit - add pdc
++        tag.putBoolean("Nabulus.CreativeLevel", this.creativeLevel); // Nabulus
      }
  
      private static ListTag stringCollectionToTag(Set<String> stringCollection) {
