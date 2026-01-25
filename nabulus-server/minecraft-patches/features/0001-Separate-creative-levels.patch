@@ -46,7 +46,7 @@ index 7015d97cb5b97d59ca41f63ba23da1edfb6bae0a..98999e673ba29329948cbba8838fc1f6
                  return null;
              }
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..a4de03a71324c22774546ff1607284b51356d95f 100644
+index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..8bb626090ad7da59a102cfe6b39fe56476ef09a2 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
 @@ -647,6 +647,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
@@ -57,7 +57,21 @@ index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..a4de03a71324c22774546ff1607284b5
      }
      // CraftBukkit end
  
-@@ -1545,6 +1546,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1479,6 +1480,13 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+                 this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
+             }
+ 
++            // Nabulus start
++            boolean toOrFromCreativeLevel = ((net.minecraft.world.level.storage.PrimaryLevelData) teleportTransition.newLevel().levelData).creativeLevel || ((net.minecraft.world.level.storage.PrimaryLevelData) this.level().levelData).creativeLevel;
++            if (toOrFromCreativeLevel) {
++                this.releaseLeftShoulderEntity();
++                this.releaseRightShoulderEntity();
++            }
++            // Nabulus end
+             ServerLevel level = teleportTransition.newLevel();
+             ServerLevel serverLevel = this.level();
+             // CraftBukkit start
+@@ -1545,6 +1553,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
                  profilerFiller.pop();
                  profilerFiller.push("placing");
                  this.setServerLevel(level);
@@ -65,7 +79,7 @@ index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..a4de03a71324c22774546ff1607284b5
                  this.connection.internalTeleport(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives()); // CraftBukkit - use internal teleport without event
                  this.connection.resetPosition();
                  level.addDuringTeleport(this);
-@@ -2147,11 +2149,21 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2147,11 +2156,21 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
      }
  
      public void restoreFrom(ServerPlayer that, boolean keepEverything) {
@@ -87,7 +101,7 @@ index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..a4de03a71324c22774546ff1607284b5
          if (keepEverything) {
              // this.getAttributes().assignPermanentModifiers(that.getAttributes()); // CraftBukkit
              this.setHealth(that.getHealth());
-@@ -2180,6 +2192,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -2180,6 +2199,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
          this.chunkTrackingView = that.chunkTrackingView;
@@ -96,20 +110,25 @@ index 785045f119ee2f9b9df4efc6e2f10134a1cbb160..a4de03a71324c22774546ff1607284b5
          this.setShoulderEntityLeft(that.getShoulderEntityLeft());
          this.setShoulderEntityRight(that.getShoulderEntityRight());
 diff --git a/net/minecraft/server/players/PlayerList.java b/net/minecraft/server/players/PlayerList.java
-index 989ac565c47a70c7947cb7315d0f5c2cfecd0363..9a3cc199963d1e593218c6c294c6fedb5b45d0c4 100644
+index 989ac565c47a70c7947cb7315d0f5c2cfecd0363..e2bf5724bd606eccd021016c5cd872371ddcdc20 100644
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -606,8 +606,15 @@ public abstract class PlayerList {
-         player.level().removePlayerImmediately(player, reason);
-         ServerLevel level = teleportTransition.newLevel();
-         ServerPlayer serverPlayer = player; // Paper - TODO - recreate instance
+@@ -601,13 +601,20 @@ public abstract class PlayerList {
+         TeleportTransition teleportTransition = result.transition();
+         Level fromLevel = player.level();
+         // Paper end - respawn event
 +        // Nabulus start
 +        boolean toOrFromCreativeLevel = ((net.minecraft.world.level.storage.PrimaryLevelData) teleportTransition.newLevel().levelData).creativeLevel || ((net.minecraft.world.level.storage.PrimaryLevelData) player.level().levelData).creativeLevel;
 +        if (toOrFromCreativeLevel) {
-+            serverPlayer.releaseLeftShoulderEntity();
-+            serverPlayer.releaseRightShoulderEntity();
++            player.releaseLeftShoulderEntity();
++            player.releaseRightShoulderEntity();
 +        }
 +        // Nabulus end
+         this.players.remove(player);
+         this.playersByName.remove(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Paper
+         player.level().removePlayerImmediately(player, reason);
+         ServerLevel level = teleportTransition.newLevel();
+         ServerPlayer serverPlayer = player; // Paper - TODO - recreate instance
          serverPlayer.connection = player.connection;
 -        serverPlayer.restoreFrom(player, keepInventory);
 +        serverPlayer.restoreFrom(player, keepInventory, toOrFromCreativeLevel); // Nabulus
