@@ -5,65 +5,65 @@ Subject: [PATCH] Add silent chest flag to players
 
 
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 6f49b5e5888a6296b929e465a5ef87dc49bd4516..a67c766b13d707dd8da023adacf0976bc4b8e86a 100644
+index 6a0ebbdfcc0bc07915574c1cf87463e82213ca7e..1b2e506c997d969c3f2a705c09894c2b784cf951 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -291,6 +291,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -292,6 +292,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper - Friction API
      public int invulnerableDuration = LivingEntity.INVULNERABLE_DURATION; // Paper - configurable invulnerable duration
      // CraftBukkit end
 +    public boolean silentChests = false; // Nabulus
  
-     protected LivingEntity(EntityType<? extends LivingEntity> type, Level level) {
+     protected LivingEntity(final EntityType<? extends LivingEntity> type, final Level level) {
          super(type, level);
 diff --git a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-index 4f3b6a32fe4e791aab05aa9e553ec935e3cd5e6b..a3c921042ebfc0760f09a33ff1dfc409aeef48a0 100644
+index aa8b384b05738139fa3492b3c09084cda09448ce..5c282e47f568a5197916c9e87b8debeedbfc8029 100644
 --- a/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
 +++ b/net/minecraft/world/level/block/entity/ContainerOpenersCounter.java
-@@ -40,6 +40,7 @@ public abstract class ContainerOpenersCounter {
-     public abstract boolean isOwnContainer(Player player);
- 
-     public void incrementOpeners(LivingEntity entity, Level level, BlockPos pos, BlockState state, double interactionRange) {
+@@ -48,6 +48,7 @@ public abstract class ContainerOpenersCounter {
+     public void incrementOpeners(
+         final LivingEntity entity, final Level level, final BlockPos pos, final BlockState blockState, final double maxInteractionRange
+     ) {
 +        if (entity.silentChests) return; // Nabulus
-         int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
-         int i = this.openCount++;
- 
-@@ -64,6 +65,7 @@ public abstract class ContainerOpenersCounter {
+         // Paper start - delay open/close callbacks
+         if (this.delayCallbacks()) {
+             scheduleRecheck(level, pos, blockState, 1);
+@@ -78,6 +79,7 @@ public abstract class ContainerOpenersCounter {
      }
  
-     public void decrementOpeners(LivingEntity entity, Level level, BlockPos pos, BlockState state) {
+     public void decrementOpeners(final LivingEntity entity, final Level level, final BlockPos pos, final BlockState blockState) {
 +        if (entity.silentChests) return; // Nabulus
-         int oldPower = Math.max(0, Math.min(15, this.openCount)); // CraftBukkit - Get power before new viewer is added
-         if (this.openCount == 0) return; // Paper - Prevent ContainerOpenersCounter openCount from going negative
-         int i = this.openCount--;
-@@ -90,7 +92,7 @@ public abstract class ContainerOpenersCounter {
-     public List<ContainerUser> getEntitiesWithContainerOpen(Level level, BlockPos pos) {
-         double d = this.maxInteractionRange + 4.0;
-         AABB aabb = new AABB(pos).inflate(d);
--        return level.getEntities((Entity)null, aabb, entity -> this.hasContainerOpen(entity, pos))
-+        return level.getEntities((Entity)null, aabb, entity -> this.hasContainerOpen(entity, pos) && (!(entity instanceof Player) || !((Player) entity).silentChests)) // Nabulus - add silent chest check
+         // Paper start - delay open/close callbacks
+         if (this.delayCallbacks()) {
+             scheduleRecheck(level, pos, blockState, 1);
+@@ -110,7 +112,7 @@ public abstract class ContainerOpenersCounter {
+     public List<ContainerUser> getEntitiesWithContainerOpen(final Level level, final BlockPos pos) {
+         double range = this.maxInteractionRange + 4.0;
+         AABB searchBox = new AABB(pos).inflate(range);
+-        return level.getEntities((Entity)null, searchBox, entity -> this.hasContainerOpen(entity, pos))
++        return level.getEntities((Entity)null, searchBox, entity -> this.hasContainerOpen(entity, pos) && (!(entity instanceof Player) || !((Player) entity).silentChests)) // Nabulus - add silent chest check
              .stream()
              .map(entity -> (ContainerUser)entity)
              .collect(Collectors.toList());
 diff --git a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-index 61b99c895c0e248f0e7c4c634644dcff54a964d9..4ff769502875277965390f7385bf28d3384899e8 100644
+index 5f6078e4cc06c059c01c7a20421f2f3a364a058b..51dc3db4ec14875575a5ffac7a13ee2b4ffe0788 100644
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 @@ -201,7 +201,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
-     public void startOpen(ContainerUser user) {
--        if (!this.remove && !user.getLivingEntity().isSpectator()) {
-+        if (!this.remove && !user.getLivingEntity().isSpectator() && !user.getLivingEntity().silentChests) {
+     public void startOpen(final ContainerUser containerUser) {
+-        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
++        if (!this.remove && !containerUser.getLivingEntity().isSpectator() && !containerUser.getLivingEntity().silentChests) {
              if (this.openCount < 0) {
                  this.openCount = 0;
              }
-@@ -219,7 +219,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
+@@ -221,7 +221,7 @@ public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity impl
  
      @Override
-     public void stopOpen(ContainerUser user) {
--        if (!this.remove && !user.getLivingEntity().isSpectator()) {
-+        if (!this.remove && !user.getLivingEntity().isSpectator() && !user.getLivingEntity().silentChests) {
+     public void stopOpen(final ContainerUser containerUser) {
+-        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
++        if (!this.remove && !containerUser.getLivingEntity().isSpectator() && !containerUser.getLivingEntity().silentChests) {
              this.openCount--;
              if (this.opened) return; // CraftBukkit - only animate if the ShulkerBox hasn't been forced open already by an API call.
              this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);

@@ -5,12 +5,12 @@ Subject: [PATCH] Allow players to hide wither boss bar
 
 
 diff --git a/net/minecraft/world/entity/boss/wither/WitherBoss.java b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-index 86b6b94c3e63bb52917fe0f708d24aa813f433c7..f30b7a7d4a1d93c3332030c786b49b7f169689b5 100644
+index 419c29c003b3e690a89a14c0a9b3eb2ac3500175..4f93d1983618239db4fb02eb95955d9d5d42b63d 100644
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -80,6 +80,21 @@ public class WitherBoss extends Monster implements RangedAttackMob {
-     private static final TargetingConditions.Selector LIVING_ENTITY_SELECTOR = (entity, level) -> !entity.getType().is(EntityTypeTags.WITHER_FRIENDS)
-         && entity.attackable();
+@@ -82,6 +82,21 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+     private static final TargetingConditions.Selector LIVING_ENTITY_SELECTOR = (target, level) -> !target.is(EntityTypeTags.WITHER_FRIENDS)
+         && target.attackable();
      private static final TargetingConditions TARGETING_CONDITIONS = TargetingConditions.forCombat().range(20.0).selector(LIVING_ENTITY_SELECTOR);
 +    // Nabulus start
 +    public boolean hideBossBar = false;
@@ -28,19 +28,19 @@ index 86b6b94c3e63bb52917fe0f708d24aa813f433c7..f30b7a7d4a1d93c3332030c786b49b7f
 +    }
 +    // Nabulus end
  
-     public WitherBoss(EntityType<? extends WitherBoss> type, Level level) {
+     public WitherBoss(final EntityType<? extends WitherBoss> type, final Level level) {
          super(type, level);
-@@ -134,6 +149,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+@@ -136,6 +151,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      @Override
-     public void setCustomName(@Nullable Component name) {
+     public void setCustomName(final @Nullable Component name) {
          super.setCustomName(name);
 +        updateBossBar(); // Nabulus
          this.bossEvent.setName(this.getDisplayName());
      }
  
-@@ -404,7 +420,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+@@ -403,7 +419,7 @@ public class WitherBoss extends Monster implements RangedAttackMob {
      @Override
-     public void startSeenByPlayer(ServerPlayer player) {
+     public void startSeenByPlayer(final ServerPlayer player) {
          super.startSeenByPlayer(player);
 -        this.bossEvent.addPlayer(player);
 +        if (!hideBossBar) this.bossEvent.addPlayer(player); // Nabulus

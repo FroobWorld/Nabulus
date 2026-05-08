@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: froobynooby <froobynooby@froobworld.com>
+Date: Sun, 27 Feb 2022 21:27:01 +0930
+Subject: [PATCH] Separate creative levels
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index f77cb6d85c8947a96d41b96b31814c551dfd5258..31c67e7bf93d7dfef7a0c86f84ba6a181860aa0b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -2060,4 +2060,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+         return POINTERS_SUPPLIER.view(this);
+     }
+     // Paper end
++
++    // Nabulus start
++    private static final org.bukkit.NamespacedKey creativeLevelKey = new org.bukkit.NamespacedKey("nabulus", "creative_level");
++    public boolean isCreativeLevel() {
++        return Boolean.TRUE.equals(getPersistentDataContainer().get(creativeLevelKey, org.bukkit.persistence.PersistentDataType.BOOLEAN));
++    }
++    // Nabulus end
+ }
