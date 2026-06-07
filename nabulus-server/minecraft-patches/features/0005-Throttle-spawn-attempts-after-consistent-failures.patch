@@ -5,7 +5,7 @@ Subject: [PATCH] Throttle spawn attempts after consistent failures
 
 
 diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
-index 427573fc142c107d3fcc2be9000316221039ba4c..b8da67ea3be09335b80d8ce39c55aa7e3ab03ec1 100644
+index 427573fc142c107d3fcc2be9000316221039ba4c..546b0b709afa877de53fd830b61ae1fb8ded81f1 100644
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
 @@ -166,6 +166,11 @@ public final class NaturalSpawner {
@@ -20,7 +20,7 @@ index 427573fc142c107d3fcc2be9000316221039ba4c..b8da67ea3be09335b80d8ce39c55aa7e
              // Paper start - Optional per player mob spawns
              final boolean canSpawn;
              int maxSpawns = Integer.MAX_VALUE;
-@@ -194,6 +199,15 @@ public final class NaturalSpawner {
+@@ -194,8 +199,17 @@ public final class NaturalSpawner {
                  canSpawn = state.canSpawnForCategoryLocal(mobCategory, chunk.getPos());
              }
              if (canSpawn) {
@@ -34,8 +34,11 @@ index 427573fc142c107d3fcc2be9000316221039ba4c..b8da67ea3be09335b80d8ce39c55aa7e
 +                };
 +                // Nabulus end
                  spawnCategoryForChunk(mobCategory, level, chunk, state::canSpawn, state::afterSpawn,
-                     maxSpawns, level.paperConfig().entities.spawning.perPlayerMobSpawns ? level.getChunkSource().chunkMap::updatePlayerMobTypeMap : null);
+-                    maxSpawns, level.paperConfig().entities.spawning.perPlayerMobSpawns ? level.getChunkSource().chunkMap::updatePlayerMobTypeMap : null);
++                    maxSpawns, trackEntity);
                  // Paper end - Optional per player mob spawns
+             }
+         }
 @@ -627,6 +641,7 @@ public final class NaturalSpawner {
          private @Nullable BlockPos lastCheckedPos;
          private @Nullable EntityType<?> lastCheckedType;
