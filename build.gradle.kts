@@ -1,8 +1,10 @@
+import io.papermc.paperweight.checkstyle.PaperCheckstyleExt
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id("io.papermc.paperweight.patcher") version "2.0.0-beta.21"
+    java // TODO java launcher tasks
+    id("io.papermc.paperweight.patcher") version "2.0.0-beta.24"
 }
 
 paperweight {
@@ -19,11 +21,27 @@ paperweight {
             outputFile = file("nabulus-api/build.gradle.kts")
             patchFile = file("nabulus-api/build.gradle.kts.patch")
         }
+        patchFile {
+            path = "paper-checkstyle/build.gradle.kts"
+            outputFile = file("nabulus-checkstyle/build.gradle.kts")
+            patchFile = file("nabulus-checkstyle/build.gradle.kts.patch")
+        }
         patchDir("paperApi") {
             upstreamPath = "paper-api"
             excludes = setOf("build.gradle.kts")
             patchesDir = file("nabulus-api/paper-patches")
             outputDir = file("paper-api")
+        }
+        patchDir("paperCheckstyle") {
+            upstreamPath = "paper-checkstyle"
+            excludes = setOf("build.gradle.kts")
+            patchesDir = file("nabulus-checkstyle/paper-patches")
+            outputDir = file("paper-checkstyle")
+        }
+        patchDir("paperCheckstyleConfig") {
+            upstreamPath = ".checkstyle"
+            patchesDir = file("nabulus-checkstyle/config-patches")
+            outputDir = file(".checkstyle")
         }
     }
 }
@@ -45,10 +63,16 @@ subprojects {
         maven(paperMavenPublicUrl)
     }
 
-    tasks.withType<AbstractArchiveTask>().configureEach {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
+    if (name !in setOf("nabulus-server", "paper-server")) {
+        apply { plugin("io.papermc.paperweight.paper-checkstyle") }
+        extensions.configure<PaperCheckstyleExt> {
+            typeUseAnnotationsFile.set(rootProject.layout.projectDirectory.file(".checkstyle/type_use_annotations.txt"))
+        }
+        dependencies {
+            "checkstyle"(project(":nabulus-checkstyle"))
+        }
     }
+
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
         options.release = 25
