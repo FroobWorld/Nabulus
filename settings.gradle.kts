@@ -12,4 +12,4 @@ plugins {
 
 rootProject.name = "nabulus"
 
-include("nabulus-api", "nabulus-server")
+include("nabulus-api", "nabulus-server", "nabulus-checkstyle")

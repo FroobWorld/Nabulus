@@ -5,10 +5,10 @@ Subject: [PATCH] Separate creative levels
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index f77cb6d85c8947a96d41b96b31814c551dfd5258..31c67e7bf93d7dfef7a0c86f84ba6a181860aa0b 100644
+index 9db1a0be9fc09b0e33ed522a4566468474a5632b..d54d5fc690e8f4684526697f5ff25cd007c46305 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -2060,4 +2060,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -2048,4 +2048,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
          return POINTERS_SUPPLIER.view(this);
      }
      // Paper end

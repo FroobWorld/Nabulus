@@ -5,7 +5,7 @@ Subject: [PATCH] Implement tick rate options for OneShot behaviors
 
 
 diff --git a/net/minecraft/world/entity/ai/behavior/Behavior.java b/net/minecraft/world/entity/ai/behavior/Behavior.java
-index b620d38e61ae560074b551a92afefe4022d5078e..e4dc3492b2e23a0f06ebc71905e968f56a0f6d26 100644
+index f78464bcbf82fdc7cbf43c2ee586586b2cdfa552..5b57476ae50ed4df9aa9b028d7b40460a7eb5d29 100644
 --- a/net/minecraft/world/entity/ai/behavior/Behavior.java
 +++ b/net/minecraft/world/entity/ai/behavior/Behavior.java
 @@ -16,6 +16,16 @@ public abstract class Behavior<E extends LivingEntity> implements BehaviorContro
@@ -80,10 +80,10 @@ index d7b97e35e1aa5264f191048cb448d18d28f75ea8..bacea4c085a54a0d6df80c3483783e80
          } else {
              return false;
 diff --git a/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java b/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
-index 9cac66173a1a20e7bafca3a53cf84960c4806ccb..299f0b7f0816058f8bec48587dc7199c282c9561 100644
+index b3f11434b1ce5a6b74c9f47b300f811c6bb55655..22432b92fdbf07b1fe4f7c99a5e03012f0d06ff5 100644
 --- a/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
 +++ b/net/minecraft/world/entity/ai/behavior/declarative/BehaviorBuilder.java
-@@ -40,7 +40,15 @@ public class BehaviorBuilder<E extends LivingEntity, M> implements App<BehaviorB
+@@ -39,7 +39,15 @@ public class BehaviorBuilder<E extends LivingEntity, M> implements App<BehaviorB
          final Function<BehaviorBuilder.Instance<E>, ? extends App<BehaviorBuilder.Mu<E>, Trigger<E>>> builder
      ) {
          final BehaviorBuilder.TriggerWithResult<E, Trigger<E>> resolvedBuilder = get((App<BehaviorBuilder.Mu<E>, Trigger<E>>)builder.apply(instance()));

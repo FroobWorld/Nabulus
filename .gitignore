@@ -55,5 +55,9 @@ nabulus-api/src
 nabulus-api/build.gradle.kts
 nabulus-server/src
 nabulus-server/build.gradle.kts
+nabulus-checkstyle/build.gradle.kts
+paper-api
 paper-server
+paper-checkstyle
 patches
+.checkstyle

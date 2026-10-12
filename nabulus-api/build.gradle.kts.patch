@@ -1,7 +1,24 @@
 --- a/paper-api/build.gradle.kts
 +++ b/paper-api/build.gradle.kts
-@@ -91,7 +_,7 @@
+@@ -19,7 +19,11 @@
+ 
+ paperCheckstyle {
+     customJavadocTags = projectCustomJavadocTags
+-    directoriesToSkipFile = layout.projectDirectory.file(".checkstyle/ignored_directories.txt")
++    directoriesToSkipFile = layout.projectDirectory.file("../paper-api/.checkstyle/ignored_directories.txt")
++}
++
++tasks.named<io.papermc.paperweight.checkstyle.tasks.MergeCheckstyleConfigs>("mergeCheckstyleConfigs") {
++    overrideConfigFile.set(layout.projectDirectory.file("../paper-api/.checkstyle/checkstyle.xml"))
+ }
+ 
+ val annotationsVersion = "26.1.0"
+@@ -103,10 +107,10 @@
      testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.3")
+ 
+     // checkstyle
+-    checkstyle(project(":paper-checkstyle"))
++    checkstyle(project(":nabulus-checkstyle"))
  }
  
 -val generatedDir: java.nio.file.Path = layout.projectDirectory.dir("src/generated/java").asFile.toPath()
@@ -9,7 +26,7 @@
  idea {
      module {
          generatedSourceDirs.add(generatedDir.toFile())
-@@ -101,6 +_,18 @@
+@@ -116,6 +120,18 @@
      main {
          java {
              srcDir(generatedDir)
@@ -28,7 +45,7 @@
          }
      }
  }
-@@ -183,7 +_,7 @@
+@@ -198,7 +214,7 @@
  
  tasks.withType<Javadoc>().configureEach {
      val options = options as StandardJavadocDocletOptions
@@ -37,7 +54,7 @@
      options.use()
      options.isDocFilesSubDirs = true
      options.links(
-@@ -217,11 +_,11 @@
+@@ -225,11 +241,11 @@
      }
  
      // workaround for https://github.com/gradle/gradle/issues/4046
